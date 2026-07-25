@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}Editar Curso{% endblock %}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var numInput = document.getElementById('id_num_descansos');
+    var items = document.querySelectorAll('.descanso-item');
+    function toggle() {
+        var n = parseInt(numInput.value) || 0;
+        items.forEach(function(el) {
+            el.style.display = parseInt(el.dataset.n) <= n ? '' : 'none';
+        });
+    }
+    numInput.addEventListener('input', toggle);
+    toggle();
+});
+</script>
+{% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{% url 'cursos_list' %}">Cursos</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Editar {{ object.nombre }}</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="card border rounded-3">
+    <div class="card-body p-4">
+      <h4 class="mb-3">Editar Curso</h4>
+      <form method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+        <div class="alert alert-danger">
+          <strong>Corrige los siguientes errores:</strong>
+          <ul class="mb-0">
+            {% for field in form %}{% for error in field.errors %}<li>{{ field.label }}: {{ error }}</li>{% endfor %}{% endfor %}
+            {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">{{ form.nombre.label }}</label>
+            {{ form.nombre }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">{{ form.nivel.label }}</label>
+            {{ form.nivel }}
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">{{ form.descripcion.label }}</label>
+            {{ form.descripcion }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">{{ form.sede.label }}</label>
+            {{ form.sede }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">{{ form.tutor.label }}</label>
+            {{ form.tutor }}
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">{{ form.materias.label }}</label>
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2 border rounded p-3 bg-light">
+              {% for checkbox in form.materias %}
+              <div class="col">
+                <label class="form-check-label d-flex align-items-center gap-2">
+                  {{ checkbox.tag }} {{ checkbox.choice_label }}
+                </label>
+              </div>
+              {% endfor %}
+            </div>
+            {% if form.materias.help_text %}<div class="form-text">{{ form.materias.help_text }}</div>{% endif %}
+          </div>
+          <div class="col-12 mt-3">
+            <hr>
+            <h5 class="mb-3">Configuración de Horario</h5>
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">{{ form.hora_inicio_jornada.label }}</label>
+                {{ form.hora_inicio_jornada }}
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">{{ form.hora_fin_jornada.label }}</label>
+                {{ form.hora_fin_jornada }}
+              </div>
+              <div class="col-md-2">
+                <label class="form-label fw-semibold">{{ form.duracion_clase.label }}</label>
+                {{ form.duracion_clase }}
+              </div>
+              <div class="col-md-2">
+                <label class="form-label fw-semibold">{{ form.num_descansos.label }}</label>
+                {{ form.num_descansos }}
+              </div>
+            </div>
+            <div class="row g-3 mt-2" id="descansos-container">
+              <div class="col-md-2 descanso-item" data-n="1">
+                <label class="form-label fw-semibold">{{ form.descanso1_min.label }}</label>
+                {{ form.descanso1_min }}
+              </div>
+              <div class="col-md-2 descanso-item" data-n="2">
+                <label class="form-label fw-semibold">{{ form.descanso2_min.label }}</label>
+                {{ form.descanso2_min }}
+              </div>
+              <div class="col-md-2 descanso-item" data-n="3">
+                <label class="form-label fw-semibold">{{ form.descanso3_min.label }}</label>
+                {{ form.descanso3_min }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-success px-4"><i class="fas fa-save"></i> Guardar</button>
+          <a href="{% url 'cursos_list' %}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  .curso-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .curso-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .curso-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #447e9b;
+  }
+  .curso-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .curso-card .meta {
+    color: #666;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .curso-card .count {
+    background: #447e9b;
+    color: #fff;
+    border-radius: 12px;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+  }
+  .back-link {
+    margin-bottom: 16px;
+    display: inline-block;
+  }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin:app_list' app_label=app_label %}">{{ opts.app_config.verbose_name }}</a>
+  &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <h1>{{ title }}</h1>
+
+  {% if cursos %}
+  <div class="curso-grid">
+    {% for c in cursos %}
+    <a href="{% url 'admin:estudiantes_por_curso_detalle' c.id %}" class="curso-card">
+      <h3>{{ c.nombre }}</h3>
+      <div class="meta">
+        <span>Tutor: {{ c.tutor }}</span>
+        <span class="count">{{ c.total }} estudiante{{ c.total|pluralize }}</span>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>{% translate 'No hay cursos registrados.' %}</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

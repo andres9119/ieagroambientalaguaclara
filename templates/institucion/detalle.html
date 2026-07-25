@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nuestra Institución - Colegio Web{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="py-6 bg-primary-custom text-white text-center position-relative overflow-hidden">
+    <div class="container position-relative z-1">
+        <h1 class="display-2 fw-bold mb-4 text-white">Nuestra Institución</h1>
+        <p class="lead mb-7 px-md-3 mx-auto" style="max-width: 900px; font-size: 1.35rem; line-height: 1.8;">
+            Educación propia, territorio, cultura y futuro. La Institución Educativa Agroambiental Agua Clara construye procesos formativos desde la comunidad, la vida y la relación con la Madre Tierra.
+        </p>
+    </div>
+    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10"
+        style="background: url('{% static 'img/pattern.png' %}') repeat;"></div>
+</section>
+
+<!-- Shield and Flag Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center align-items-center g-4 mb-5">
+            <div class="col-6 col-md-4 text-center">
+                <img src="{% static 'img/escudo.png' %}" alt="Escudo Institucional"
+                    class="img-fluid" style="max-height: 280px; object-fit: contain;">
+            </div>
+            <div class="col-6 col-md-4 text-center">
+                <img src="{% static 'img/bandera_ieaguaclara.png' %}" alt="Bandera Institucional"
+                    class="img-fluid" style="max-height: 280px; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Principles Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6 mb-4 mb-lg-0 order-lg-2">
+                <img src="{{ MEDIA_URL }}institucion/institucion.webp" alt="Institución Educativa Agroambiental Agua Clara"
+                    class="img-fluid rounded shadow-lg w-100" style="object-fit: cover; max-height: 650px;">
+            </div>
+            <div class="col-lg-6 pe-lg-5 order-lg-1">
+                <span class="text-secondary-custom fw-bold text-uppercase small ls-2">Principios Institucionales</span>
+                <h2 class="display-5 fw-bold text-primary-custom mb-4">Una educación para transformar el territorio</h2>
+                <p class="text-muted lh-lg mb-4">
+                    La Institución Educativa Agroambiental Agua Clara reconoce las dificultades que atraviesa el territorio: la voracidad de la guerra, la destrucción de las relaciones familiares y comunitarias, la pérdida de los usos y costumbres del pueblo Nasa y la amenaza sobre su lengua, el Nasa Yuwe. También reconoce la llegada de cultivos de uso ilícito y la pérdida de los tules tradicionales, que han afectado profundamente el manto de Uma Kiwe y la posibilidad de seguir viviendo en armonía con la Madre Tierra.
+                </p>
+                <p class="text-muted lh-lg mb-4">
+                    Por esta razón, la institución organiza sus procesos pedagógicos y comunitarios desde una educación que transforma, que fortalece la unidad, que rescata la raíz cultural del pueblo Nasa, que vivencia los saberes desde el territorio y que cuida la Uma Kiwe.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission and Vision -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-5 text-center">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold text-primary-custom">Misión y Visión</h2>
+                <div class="divider mx-auto bg-secondary-custom my-4" style="width: 60px; height: 4px;"></div>
+                <p class="text-muted">La propuesta educativa de la institución nace del territorio, la cultura y la esperanza de una comunidad que sigue adelante.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                    <div class="card-body p-4 p-lg-5">
+                        <h3 class="h4 fw-bold text-dark mb-3">Misión</h3>
+                        <p class="text-muted small text-start">
+                            La Institución Educativa Agroambiental Agua Clara se aboca a la construcción de un proceso de formación educativo integral de calidad con base al Sistema Indígena de Educación Propia (SEIP), en el que se rescate el amor por el territorio, la identidad cultural, el pensamiento crítico y el accionar colectivo; empleando estrategias basadas en la cosmovisión del pueblo nasa, los saberes agroambientales y la innovación pedagógica, que permitan la potencialización de dones y la adquisición de conocimientos y habilidades, para vivir en armonía con la comunidad, la sociedad y la naturaleza.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm hover-lift transition-all">
+                    <div class="card-body p-4 p-lg-5">
+                        <h3 class="h4 fw-bold text-dark mb-3">Visión</h3>
+                        <p class="text-muted small text-start">
+                            La Institución Educativa Agroambiental Agua Clara se proyecta al 2028 como un proceso educativo reconocido a nivel regional por sus estrategias pedagógicas innovadoras y diferenciales, consolidando proyectos educativos desde lo científico, lo cultural, lo artístico y lo deportivo; liderando proyectos agroambientales que contribuyan a la estructuración de los proyectos de vida de las semillas y fortaleciendo la economía comunitaria del café desde fundamentos tecnológicos, democráticos, participativos, comunitarios e incluyentes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Principles Cards -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-primary-custom">Principios que orientan nuestra práctica</h2>
+            <div class="divider mx-auto bg-secondary-custom my-4" style="width: 80px; height: 4px;"></div>
+            <p class="text-muted">Estos principios guían la relación entre educación, territorio, comunidad y naturaleza.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="h5 fw-bold text-dark mb-3">Educación para transformar</h3>
+                        <p class="text-muted small mb-0">
+                            Los procesos educativos deben estar orientados a transformar el estado de las cosas en el territorio, desde las necesidades, los sueños y las luchas históricas de la comunidad.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="h5 fw-bold text-dark mb-3">La unidad para la pervivencia</h3>
+                        <p class="text-muted small mb-0">
+                            La unidad es base de la organización comunitaria y de la vida en el pueblo Nasa. La escuela debe ser un espacio que fortalece el trabajo cooperativo, solidario y colectivo.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="h5 fw-bold text-dark mb-3">La búsqueda cultural del Nas Nasa</h3>
+                        <p class="text-muted small mb-0">
+                            La educación debe respetar la Ley de Origen, recuperar los usos y costumbres del pueblo Nasa y orientar las acciones educativas desde la cosmovisión, la espiritualidad y la memoria histórica.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="h5 fw-bold text-dark mb-3">Saberes vivenciados desde el territorio</h3>
+                        <p class="text-muted small mb-0">
+                            La escuela pasa de ser un espacio de conocimientos abstractos a un fogón de discusión y transformación del territorio, donde teoría y práctica se viven de forma integral.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h3 class="h5 fw-bold text-dark mb-3">Cuidado de la Uma Kiwe</h3>
+                        <p class="text-muted small mb-0">
+                            La institución se convierte en un espacio de recuperación del manto de la Madre Tierra, articulando saberes ancestrales con avances científicos y tecnológicos para cuidar la naturaleza.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

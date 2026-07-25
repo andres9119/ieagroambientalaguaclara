@@ -1,0 +1,146 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+  .header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .search-form input[type="text"] {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 13px;
+    min-width: 260px;
+  }
+  .search-form button {
+    padding: 6px 14px;
+    background: #447e9b;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .search-form button:hover {
+    background: #35687d;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+  }
+  table thead th {
+    background: #f8f8f8;
+    font-weight: 600;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #666;
+  }
+  table tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+  }
+  table tbody tr:hover {
+    background: #f5f9fc;
+  }
+  .badge-curso {
+    display: inline-block;
+    background: #e8f0fe;
+    color: #447e9b;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .action-links a {
+    margin-right: 8px;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+  }
+  .total-count {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin:app_list' app_label=app_label %}">{{ opts.app_config.verbose_name }}</a>
+  &rsaquo; <a href="{% url 'admin:estudiantes_por_curso' %}">{% translate 'Estudiantes por Curso' %}</a>
+  &rsaquo; {{ curso.nombre }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <div class="header-bar">
+    <div>
+      <h1 style="margin:0;">{{ curso.nombre }}</h1>
+      <div class="total-count">
+        <span class="badge-curso">{{ curso.nivel }}</span>
+        {{ estudiantes|length }} estudiante{{ estudiantes|pluralize }} matriculados
+      </div>
+    </div>
+    <form class="search-form" method="get">
+      <input type="text" name="q" placeholder="Buscar por nombre o documento..." value="{{ search_query }}">
+      <button type="submit">Buscar</button>
+      {% if search_query %}
+      <a href="." style="margin-left:8px;font-size:13px;">{% translate 'Limpiar filtro' %}</a>
+      {% endif %}
+    </form>
+  </div>
+
+  {% if estudiantes %}
+  <table>
+    <thead>
+      <tr>
+        <th>N° Documento</th>
+        <th>Nombre Completo</th>
+        <th>Tipo Doc</th>
+        <th>Acudiente</th>
+        <th>Promedio</th>
+        {% if has_change_permission %}
+        <th>Acciones</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in estudiantes %}
+      <tr>
+        <td><strong>{{ e.documento }}</strong></td>
+        <td><strong>{{ e.nombre }}</strong></td>
+        <td>{{ e.tipo_doc }}</td>
+        <td>{{ e.acudiente }}</td>
+        <td>{{ e.promedio }}</td>
+        {% if has_change_permission %}
+        <td class="action-links">
+          <a href="{% url 'admin:estudiantes_estudiante_change' e.id %}" class="changelink">{% translate 'Editar' %}</a>
+        </td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <p>{% if search_query %}{% translate 'No se encontraron estudiantes con ese criterio de búsqueda.' %}{% else %}{% translate 'No hay estudiantes matriculados en este curso.' %}{% endif %}</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

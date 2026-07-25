@@ -1,0 +1,39 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<div id="content-main">
+    <div class="module">
+        <h1>Promocionar Estudiantes: {{ curso_origen.nombre }}</h1>
+        <p>Curso origen: <strong>{{ curso_origen.nombre }}</strong> ({{ curso_origen.nivel }})</p>
+        <p>Estudiantes activos a promocionar: <strong>{{ estudiantes_count }}</strong></p>
+
+        <form method="post" style="max-width: 500px; margin-top: 20px;">
+            {% csrf_token %}
+            <fieldset class="module aligned">
+                <div class="form-row">
+                    <label>Curso destino:</label>
+                    <select name="curso_destino" required style="width: 100%; padding: 5px;">
+                        <option value="">--- Seleccionar ---</option>
+                        {% for c in cursos_destino %}
+                        <option value="{{ c.id }}">{{ c.nombre }} ({{ c.nivel }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Ano lectivo destino:</label>
+                    <input type="number" name="anio_destino" value="{{ prox_anio }}" style="width: 100%; padding: 5px;">
+                </div>
+                <div class="form-row">
+                    <label>
+                        <input type="checkbox" name="desactivar_origen" checked>
+                        Desactivar matriculas actuales (curso origen)
+                    </label>
+                </div>
+            </fieldset>
+            <div class="submit-row" style="margin-top: 20px;">
+                <input type="submit" value="Promocionar Estudiantes" class="default" style="background: #17a2b8;">
+                <a href="{% url 'admin:academico_curso_changelist' %}" class="button cancel-link">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% block title %}Mis Notas Académicas{% endblock %}
+{% block content %}
+<div class="container py-5">
+
+    <!-- Header -->
+    <div class="row mb-5 align-items-end">
+        <div class="col-md-8">
+            <p class="text-muted mb-1 text-uppercase fw-semibold" style="letter-spacing:1px; font-size:0.8rem;">
+                <i class="fas fa-graduation-cap me-1"></i>Portal Académico
+            </p>
+            <h1 class="display-5 fw-bold" style="color: var(--primary-color);">Mis Calificaciones</h1>
+            <p class="lead text-muted mb-0">Registro oficial de notas por periodo académico.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            {% if estudiante %}
+            <div class="card border-0 shadow-sm" style="border-radius:12px;">
+                <div class="card-body py-3 px-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#003366,#0ea5e9); color:white; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:800; flex-shrink:0;">
+                            {{ estudiante.display_name|slice:":1"|upper }}
+                        </div>
+                        <div class="text-start">
+                            <div class="fw-bold" style="font-size:0.9rem;">{{ estudiante.display_name }}</div>
+                            {% with mat=estudiante.matriculas.all %}
+                            {% for m in mat %}{% if m.activo %}<small class="text-muted">{{ m.curso.nombre }} · {{ m.anio_lectivo }}</small>{% endif %}{% endfor %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'generar_boletin_pdf' %}" target="_blank" class="btn btn-danger btn-sm shadow-sm mt-2 w-100" style="border-radius:8px;">
+                <i class="fas fa-file-pdf me-2"></i>Descargar Boletín Oficial PDF
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if boletin %}
+    <!-- Grades Table -->
+    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
+        <div class="card-header bg-white py-3 px-4 border-0 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0"><i class="fas fa-list-ol me-2 text-primary"></i>Planilla de Calificaciones</h5>
+            <div class="d-flex gap-2">
+                <span class="badge bg-success px-3 py-2"><i class="fas fa-circle me-1" style="font-size:0.5rem;"></i>≥ 3.0 Aprobado</span>
+                <span class="badge bg-danger px-3 py-2"><i class="fas fa-circle me-1" style="font-size:0.5rem;"></i>< 3.0 Reprobado</span>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0;">
+                        <th class="ps-4 py-3" style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#64748b; width:32%;">
+                            Asignatura / Docente
+                        </th>
+                        <th class="text-center py-3" style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#4f46e5; width:12%;">
+                            <span class="period-th">P1</span>
+                        </th>
+                        <th class="text-center py-3" style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#0ea5e9; width:12%;">
+                            <span class="period-th">P2</span>
+                        </th>
+                        <th class="text-center py-3" style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#10b981; width:12%;">
+                            <span class="period-th">P3</span>
+                        </th>
+                        <th class="text-center py-3" style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#f59e0b; width:12%;">
+                            <span class="period-th">P4</span>
+                        </th>
+                        <th class="text-center py-3" style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:white; background:#003366; width:13%; border-radius:0 8px 0 0;">
+                            Promedio Anual
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in boletin %}
+                    <tr>
+                        <td class="ps-4 py-3">
+                            <span class="fw-semibold d-block">{{ item.materia.nombre }}</span>
+                            {% if item.docente %}
+                            <small class="text-muted">
+                                <i class="fas fa-chalkboard-teacher me-1"></i>
+                                {{ item.docente.usuario.get_full_name|default:item.docente.usuario.username }}
+                            </small>
+                            {% endif %}
+                        </td>
+                        <!-- P1 -->
+                        <td class="text-center py-3">
+                            {% if item.p1 and item.p1.nota > 0 %}
+                            <span class="nota-badge {% if item.p1.nota >= 3.0 %}nota-ok{% else %}nota-fail{% endif %}"
+                                data-bs-toggle="tooltip" title="{% if item.p1.observaciones %}{{ item.p1.observaciones }}{% else %}Periodo 1{% endif %}">
+                                {{ item.p1.nota }}
+                            </span>
+                            {% else %}<span class="nota-badge nota-empty">—</span>{% endif %}
+                        </td>
+                        <!-- P2 -->
+                        <td class="text-center py-3">
+                            {% if item.p2 and item.p2.nota > 0 %}
+                            <span class="nota-badge {% if item.p2.nota >= 3.0 %}nota-ok{% else %}nota-fail{% endif %}"
+                                data-bs-toggle="tooltip" title="{% if item.p2.observaciones %}{{ item.p2.observaciones }}{% else %}Periodo 2{% endif %}">
+                                {{ item.p2.nota }}
+                            </span>
+                            {% else %}<span class="nota-badge nota-empty">—</span>{% endif %}
+                        </td>
+                        <!-- P3 -->
+                        <td class="text-center py-3">
+                            {% if item.p3 and item.p3.nota > 0 %}
+                            <span class="nota-badge {% if item.p3.nota >= 3.0 %}nota-ok{% else %}nota-fail{% endif %}"
+                                data-bs-toggle="tooltip" title="{% if item.p3.observaciones %}{{ item.p3.observaciones }}{% else %}Periodo 3{% endif %}">
+                                {{ item.p3.nota }}
+                            </span>
+                            {% else %}<span class="nota-badge nota-empty">—</span>{% endif %}
+                        </td>
+                        <!-- P4 -->
+                        <td class="text-center py-3">
+                            {% if item.p4 and item.p4.nota > 0 %}
+                            <span class="nota-badge {% if item.p4.nota >= 3.0 %}nota-ok{% else %}nota-fail{% endif %}"
+                                data-bs-toggle="tooltip" title="{% if item.p4.observaciones %}{{ item.p4.observaciones }}{% else %}Periodo 4{% endif %}">
+                                {{ item.p4.nota }}
+                            </span>
+                            {% else %}<span class="nota-badge nota-empty">—</span>{% endif %}
+                        </td>
+                        <!-- Anual -->
+                        <td class="text-center py-3" style="background:#f0f4fb;">
+                            <span class="nota-anual {% if item.nota_anual >= 3.0 %}nota-anual-ok{% elif item.nota_anual > 0 %}nota-anual-fail{% endif %}">
+                                {% if item.nota_anual > 0 %}{{ item.nota_anual }}{% else %}—{% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white border-0 py-3 px-4 text-muted" style="font-size:0.82rem;">
+            <i class="fas fa-info-circle me-1"></i>
+            Pasa el cursor sobre una nota para ver las observaciones del docente. Escala: 0.0 – 5.0. Mínimo de aprobación: <strong>3.0</strong>.
+            El promedio anual es la suma de los 4 periodos dividida entre 4.
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-5">
+        <i class="fas fa-clipboard-list fa-4x text-muted opacity-25 mb-4"></i>
+        <h3 class="text-muted">No hay calificaciones disponibles</h3>
+        <p class="text-muted">Aún no tienes notas registradas en el sistema.</p>
+        <a href="{% url 'dashboard' %}" class="btn btn-primary mt-3 px-4">Ir al Dashboard</a>
+    </div>
+    {% endif %}
+
+    <div class="mt-4 text-end">
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary px-4">
+            <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
+        </a>
+    </div>
+</div>
+
+<style>
+    .nota-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 32px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: default;
+        transition: transform 0.15s;
+    }
+    .nota-badge:hover { transform: scale(1.1); }
+    .nota-ok    { background: #dcfce7; color: #166534; }
+    .nota-fail  { background: #fee2e2; color: #991b1b; }
+    .nota-empty { background: #f1f5f9; color: #94a3b8; }
+
+    .nota-anual {
+        display: inline-block;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 1rem;
+        background: #003366;
+        color: white;
+    }
+    .nota-anual-ok   { background: #166534 !important; }
+    .nota-anual-fail { background: #991b1b !important; }
+
+    .period-th {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        color: white;
+        font-size: 0.75rem;
+    }
+    thead th:nth-child(2) .period-th { background: #4f46e5; }
+    thead th:nth-child(3) .period-th { background: #0ea5e9; }
+    thead th:nth-child(4) .period-th { background: #10b981; }
+    thead th:nth-child(5) .period-th { background: #f59e0b; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (el) {
+        new bootstrap.Tooltip(el, { placement: 'top' });
+    });
+});
+</script>
+{% endblock %}

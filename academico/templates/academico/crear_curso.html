@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="display-5">Crear Curso</h1>
+    <div class="card p-4 mt-4 shadow-sm">
+        <form method="post">{% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Por favor corrige los siguientes errores:</strong>
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            <div class="row g-3">
+                <div class="col-md-6">{{ form.nombre.label_tag }} {{ form.nombre }}</div>
+                <div class="col-md-6">{{ form.nivel.label_tag }} {{ form.nivel }}</div>
+                <div class="col-md-4">{{ form.periodo_academico.label_tag }} {{ form.periodo_academico }}</div>
+                <div class="col-md-4">{{ form.anio_lectivo.label_tag }} {{ form.anio_lectivo }}</div>
+                <div class="col-md-4">{{ form.tutor.label_tag }} {{ form.tutor }}</div>
+                <div class="col-12">{{ form.descripcion.label_tag }} {{ form.descripcion }}</div>
+                <div class="col-12">{{ form.materias.label_tag }} {{ form.materias }}</div>
+                <div class="col-12">{{ form.docente_universal.label_tag }} {{ form.docente_universal }}</div>
+            </div>
+            <div class="mt-3">
+                <button class="btn btn-primary">Crear Curso</button>
+                <a href="{{ request.META.HTTP_REFERER|default:'/' }}" class="btn btn-link">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

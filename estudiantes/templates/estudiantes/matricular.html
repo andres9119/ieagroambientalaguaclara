@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="display-5">Matricular Estudiante</h1>
+    <div class="card p-4 mt-4 shadow-sm">
+        <form method="post">{% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Por favor corrige los siguientes errores:</strong>
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            <div class="row g-3">
+                <div class="col-md-4">{{ form.documento.label_tag }} {{ form.documento }}</div>
+                <div class="col-md-4">{{ form.first_name.label_tag }} {{ form.first_name }}</div>
+                <div class="col-md-4">{{ form.last_name.label_tag }} {{ form.last_name }}</div>
+                <div class="col-md-4">{{ form.fecha_nacimiento.label_tag }} {{ form.fecha_nacimiento }}</div>
+                <div class="col-md-4">{{ form.genero.label_tag }} {{ form.genero }}</div>
+                <div class="col-md-4">{{ form.rh.label_tag }} {{ form.rh }}</div>
+                <div class="col-md-4">{{ form.tipo_documento.label_tag }} {{ form.tipo_documento }}</div>
+                <div class="col-md-4">{{ form.eps.label_tag }} {{ form.eps }}</div>
+                <div class="col-md-4">{{ form.estrato.label_tag }} {{ form.estrato }}</div>
+                <div class="col-md-4">{{ form.barrio.label_tag }} {{ form.barrio }}</div>
+                <div class="col-md-4">{{ form.telefono.label_tag }} {{ form.telefono }}</div>
+                <div class="col-md-4">{{ form.celular.label_tag }} {{ form.celular }}</div>
+                <div class="col-md-4">{{ form.nui.label_tag }} {{ form.nui }}</div>
+                <div class="col-md-4">{{ form.etnia.label_tag }} {{ form.etnia }}</div>
+                <div class="col-md-4">{{ form.jornada.label_tag }} {{ form.jornada }}</div>
+                <div class="col-md-4">{{ form.curso.label_tag }} {{ form.curso }}</div>
+                <div class="col-md-4">{{ form.acudiente.label_tag }} {{ form.acudiente }}</div>
+                <div class="col-md-8">{{ form.direccion.label_tag }} {{ form.direccion }}</div>
+            </div>
+            <div class="mt-3">
+                <button class="btn btn-primary">Matricular</button>
+                <a href="{{ request.META.HTTP_REFERER|default:'/' }}" class="btn btn-link">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

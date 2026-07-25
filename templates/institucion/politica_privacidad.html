@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'inicio' %}">Inicio</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Política de Tratamiento de Datos</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5">
+                    <h1 class="display-4 mb-4 text-primary">Política de Tratamiento de Datos Personales</h1>
+
+                    {% if info.politica_privacidad %}
+                    <div class="politica-content fs-5 text-muted">
+                        {{ info.politica_privacidad|linebreaks }}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> La política de privacidad aún no ha sido configurada por
+                        el administrador.
+                    </div>
+                    {% endif %}
+
+                    <hr class="my-5">
+
+                    <div class="text-center">
+                        <p class="text-muted mb-0">Esta politica rige para todos los servicios ofrecidos por <strong>{{ info.nombre_colegio|default:"la Institucion" }}</strong>.</p>
+                        <a href="{% url 'inicio' %}" class="btn btn-outline-primary mt-3">Volver al Inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

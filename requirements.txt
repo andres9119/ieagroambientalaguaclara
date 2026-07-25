@@ -1,0 +1,15 @@
+Django==5.1.2
+gunicorn==23.0.0
+psycopg2-binary==2.9.10
+whitenoise==6.8.2
+python-decouple==3.8
+openpyxl==3.1.5
+weasyprint==69.0
+pillow==11.3.0
+reportlab==4.4.9
+django-axes==6.5.2
+django-csp==4.0
+crispy-bootstrap5==2025.6
+django-crispy-forms==2.4
+qrcode==8.2
+pypdf==6.6.0

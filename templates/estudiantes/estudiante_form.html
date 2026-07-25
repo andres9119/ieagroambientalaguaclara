@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block title %}Editar Estudiante{% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'estudiantes_por_curso' %}">Estudiantes por Curso</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Editar: {{ object.usuario.get_full_name|default:object.usuario.username }}</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Editar Estudiante</h4>
+    </div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <h5 class="text-secondary border-bottom pb-2 mb-3">Datos de Cuenta</h5>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">{{ form.numero_documento.label }}</label>
+            {{ form.numero_documento }}
+            {% if form.numero_documento.errors %}<div class="text-danger small mt-1">{{ form.numero_documento.errors|first }}</div>{% endif %}
+          </div>
+        </div>
+        <h5 class="text-secondary border-bottom pb-2 mb-3">Nombres y Apellidos</h5>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">{{ form.primer_nombre.label }}</label>
+            {{ form.primer_nombre }}
+            {% if form.primer_nombre.errors %}<div class="text-danger small mt-1">{{ form.primer_nombre.errors|first }}</div>{% endif %}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">{{ form.segundo_nombre.label }}</label>
+            {{ form.segundo_nombre }}
+            {% if form.segundo_nombre.errors %}<div class="text-danger small mt-1">{{ form.segundo_nombre.errors|first }}</div>{% endif %}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">{{ form.primer_apellido.label }}</label>
+            {{ form.primer_apellido }}
+            {% if form.primer_apellido.errors %}<div class="text-danger small mt-1">{{ form.primer_apellido.errors|first }}</div>{% endif %}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">{{ form.segundo_apellido.label }}</label>
+            {{ form.segundo_apellido }}
+            {% if form.segundo_apellido.errors %}<div class="text-danger small mt-1">{{ form.segundo_apellido.errors|first }}</div>{% endif %}
+          </div>
+        </div>
+        <h5 class="text-secondary border-bottom pb-2 mb-3">Informacion Personal</h5>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-semibold">{{ form.tipo_documento.label }}</label>
+            {{ form.tipo_documento }}
+            {% if form.tipo_documento.errors %}<div class="text-danger small mt-1">{{ form.tipo_documento.errors|first }}</div>{% endif %}
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-semibold">{{ form.fecha_nacimiento.label }}</label>
+            {{ form.fecha_nacimiento }}
+            {% if form.fecha_nacimiento.errors %}<div class="text-danger small mt-1">{{ form.fecha_nacimiento.errors|first }}</div>{% endif %}
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-semibold">{{ form.genero.label }}</label>
+            {{ form.genero }}
+            {% if form.genero.errors %}<div class="text-danger small mt-1">{{ form.genero.errors|first }}</div>{% endif %}
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-semibold">{{ form.rh.label }}</label>
+            {{ form.rh }}
+            {% if form.rh.errors %}<div class="text-danger small mt-1">{{ form.rh.errors|first }}</div>{% endif %}
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-semibold">{{ form.eps.label }}</label>
+            {{ form.eps }}
+            {% if form.eps.errors %}<div class="text-danger small mt-1">{{ form.eps.errors|first }}</div>{% endif %}
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-semibold">{{ form.estrato.label }}</label>
+            {{ form.estrato }}
+            {% if form.estrato.errors %}<div class="text-danger small mt-1">{{ form.estrato.errors|first }}</div>{% endif %}
+          </div>
+        </div>
+        <h5 class="text-secondary border-bottom pb-2 mb-3">Lugar de Procedencia</h5>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">{{ form.lugar_nacimiento.label }}</label>
+            {{ form.lugar_nacimiento }}
+            {% if form.lugar_nacimiento.errors %}<div class="text-danger small mt-1">{{ form.lugar_nacimiento.errors|first }}</div>{% endif %}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">{{ form.barrio.label }}</label>
+            {{ form.barrio }}
+            {% if form.barrio.errors %}<div class="text-danger small mt-1">{{ form.barrio.errors|first }}</div>{% endif %}
+          </div>
+        </div>
+        <h5 class="text-secondary border-bottom pb-2 mb-3">Contacto</h5>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">{{ form.telefono.label }}</label>
+            {{ form.telefono }}
+            {% if form.telefono.errors %}<div class="text-danger small mt-1">{{ form.telefono.errors|first }}</div>{% endif %}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">{{ form.celular.label }}</label>
+            {{ form.celular }}
+            {% if form.celular.errors %}<div class="text-danger small mt-1">{{ form.celular.errors|first }}</div>{% endif %}
+          </div>
+          <div class="col-md-12 mb-3">
+            <label class="form-label fw-semibold">{{ form.direccion.label }}</label>
+            {{ form.direccion }}
+            {% if form.direccion.errors %}<div class="text-danger small mt-1">{{ form.direccion.errors|first }}</div>{% endif %}
+          </div>
+        </div>
+        <h5 class="text-secondary border-bottom pb-2 mb-3">Acudiente</h5>
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <label class="form-label fw-semibold">{{ form.acudiente.label }}</label>
+            {{ form.acudiente }}
+            {% if form.acudiente.errors %}<div class="text-danger small mt-1">{{ form.acudiente.errors|first }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <div class="alert alert-info mb-0 py-2 small">
+              <strong>Curso actual:</strong> {{ curso_actual }}
+            </div>
+          </div>
+        </div>
+        <div class="mt-2">
+          <button class="btn btn-success px-4">Guardar Cambios</button>
+          <a href="{% url 'estudiantes_por_curso' %}" class="btn btn-outline-secondary ms-2">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

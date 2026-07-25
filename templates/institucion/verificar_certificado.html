@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Verificar Certificado - {{ info.nombre_colegio|default:'I.E.A. Agua Clara' }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="text-center mb-4">
+                <img src="{% static 'img/escudo.png' %}" alt="Escudo Institucional" style="height: 90px; width: 90px; object-fit: contain; margin-bottom: 8px;">
+                <h1 class="fw-bold mb-0" style="font-size: 1.15rem; color: #1a4a1a; text-transform: uppercase; letter-spacing: 0.5px;">{{ info.nombre_colegio|default:'Institución Educativa Agroambiental Agua Clara' }}</h1>
+                <p class="text-muted small mb-0">{{ info.departamento|default:'Departamento del Cauca' }} — {{ info.municipio|default:'Suárez' }}</p>
+                <p class="text-muted small">Resolución {{ info.resolucion|default:'01458-03-2012' }} &middot; DANE {{ info.dane|default:'219780000343' }}</p>
+                <hr style="width: 80px; border-top: 3px solid #1a4a1a; opacity: 1; margin: 12px auto;">
+                <h2 class="fw-semibold" style="font-size: 1rem; color: #333;">Validación de Certificado de Estudios</h2>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px; border: 1px solid #e5e7eb;">
+                <div class="card-body p-4 p-md-5 text-center">
+                    {% if not desde_qr or not valido %}
+                    <p class="text-muted mb-3" style="font-size: 0.9rem;">Ingrese el código de verificación de 10 dígitos que aparece en el certificado para confirmar su autenticidad.</p>
+                    <form method="post" class="row g-3 justify-content-center mt-2">
+                        {% csrf_token %}
+                        <div class="col-md-6">
+                            <input type="text" name="codigo" class="form-control form-control-lg text-center" placeholder="Código de verificación" value="{{ codigo }}" maxlength="10" required style="letter-spacing: 3px; font-weight: 600; font-size: 1.1rem;">
+                        </div>
+                        <div class="col-12">
+                            <button class="btn px-5 py-2" style="background: #1a4a1a; color: #fff; border: none; border-radius: 6px; font-weight: 600;"><i class="fas fa-shield-alt me-2"></i>Verificar</button>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if valido and certificado %}
+            <div class="card border-0 shadow-sm" style="border-radius: 12px; border: 2px solid #16a34a;">
+                <div class="py-3 text-center" style="background: #f0fdf4; border-radius: 10px 10px 0 0;">
+                    <span style="display: inline-block; width: 48px; height: 48px; line-height: 48px; border-radius: 50%; background: #16a34a; color: #fff; font-size: 1.3rem;"><i class="fas fa-check"></i></span>
+                    <h4 class="fw-bold mt-2 mb-0" style="color: #166534;">Documento Verificado</h4>
+                    <p class="small text-muted mb-0">El certificado con código <strong style="color: #166534; letter-spacing: 1px;">{{ certificado.codigo }}</strong> es auténtico y corresponde a:</p>
+                </div>
+                <div class="card-body p-4">
+                    <table class="table" style="font-size: 0.9rem; margin-bottom: 0;">
+                        <tr>
+                            <th style="width: 160px; background: #f9fafb; border: 1px solid #e5e7eb; padding: 10px 12px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280;">Estudiante</th>
+                            <td style="border: 1px solid #e5e7eb; padding: 10px 12px; font-weight: 600; text-transform: capitalize;">{{ certificado.estudiante_nombre }}</td>
+                        </tr>
+                        <tr>
+                            <th style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 10px 12px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280;">Documento</th>
+                            <td style="border: 1px solid #e5e7eb; padding: 10px 12px;">{{ certificado.tipo_documento }} {{ certificado.estudiante_documento }}</td>
+                        </tr>
+                        <tr>
+                            <th style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 10px 12px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280;">Grado</th>
+                            <td style="border: 1px solid #e5e7eb; padding: 10px 12px; text-transform: capitalize;">{{ certificado.grado }}</td>
+                        </tr>
+                        <tr>
+                            <th style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 10px 12px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280;">Nivel</th>
+                            <td style="border: 1px solid #e5e7eb; padding: 10px 12px; text-transform: capitalize;">{{ certificado.nivel }}</td>
+                        </tr>
+                        <tr>
+                            <th style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 10px 12px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280;">Sede</th>
+                            <td style="border: 1px solid #e5e7eb; padding: 10px 12px; text-transform: capitalize;">{{ certificado.sede }}</td>
+                        </tr>
+                        <tr>
+                            <th style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 10px 12px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280;">Año Lectivo</th>
+                            <td style="border: 1px solid #e5e7eb; padding: 10px 12px;">{{ certificado.anio }}</td>
+                        </tr>
+                        <tr>
+                            <th style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 10px 12px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280;">Fecha de Emisión</th>
+                            <td style="border: 1px solid #e5e7eb; padding: 10px 12px;">{{ certificado.fecha_emision|date:"d/m/Y h:i A" }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="py-3 text-center" style="background: #f9fafb; border-radius: 0 0 10px 10px; border-top: 1px solid #e5e7eb;">
+                    <p class="small text-muted mb-0" style="font-size: 0.75rem;">Este documento fue expedido por {{ info.nombre_colegio|default:'la Institución Educativa' }}. Su validez puede ser verificada en línea en cualquier momento.</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{% url 'verificar_certificado' %}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-redo me-1"></i> Verificar otro certificado</a>
+            </div>
+            {% endif %}
+
+            {% if valido == False %}
+            <div class="card border-0 shadow-sm mt-3" style="border-radius: 12px; border: 2px solid #dc2626;">
+                <div class="py-4 text-center" style="background: #fef2f2; border-radius: 10px;">
+                    <span style="display: inline-block; width: 48px; height: 48px; line-height: 48px; border-radius: 50%; background: #dc2626; color: #fff; font-size: 1.3rem;"><i class="fas fa-times"></i></span>
+                    <h4 class="fw-bold mt-2" style="color: #991b1b;">Código No Válido</h4>
+                    <p class="text-muted small mb-0">El código ingresado no corresponde a ningún certificado emitido por la institución.</p>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

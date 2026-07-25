@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Autoevaluación - {{ calificacion.materia.nombre }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h3 class="mb-0 h4"><i class="fas fa-user-edit me-2"></i>Autoevaluación</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <h5 class="text-primary">{{ calificacion.materia.nombre }}</h5>
+                        <p class="text-muted">Periodo {{ calificacion.periodo }}</p>
+                        <hr>
+                        <p>De acuerdo a tu desempeño en este periodo, asigna una calificación de 0.0 a 5.0 que
+                            represente tu compromiso, puntualidad y aprendizaje en esta materia.</p>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Esta nota representa el <strong>5%</strong>
+                            de tu calificación final del periodo.
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            {{ form.nota_ser_auto.label_tag }}
+                            {{ form.nota_ser_auto }}
+                            {% if form.nota_ser_auto.errors %}
+                            <div class="text-danger mt-1 small">
+                                {{ form.nota_ser_auto.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Guardar Autoevaluación</button>
+                            <a href="{% url 'mis_notas' %}" class="btn btn-outline-secondary">Volver a mis notas</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="number"] {
+        font-size: 2rem !important;
+        height: auto !important;
+        padding: 1rem !important;
+    }
+</style>
+{% endblock %}

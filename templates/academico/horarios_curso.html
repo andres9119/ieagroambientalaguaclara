@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block title %}Horarios - {{ curso.nombre }}{% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'cursos_list' %}">Cursos</a></li>
+    <li class="breadcrumb-item active">Horarios — {{ curso.nombre }}</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+  <div class="card border rounded-3">
+    <div class="card-body p-4">
+      <h4 class="mb-0">Horario de Clases</h4>
+      <p class="text-muted mb-3">{{ curso.nombre }} — {{ curso.nivel }}</p>
+
+      {% if not cm_list %}
+      <div class="alert alert-info">El curso no tiene materias asignadas. Agrégaselas desde la <a href="{% url 'curso_editar' curso.pk %}" class="alert-link">edición del curso</a>.</div>
+      {% else %}
+      <div class="text-muted small mb-3">
+        <i class="fas fa-info-circle"></i>
+        Jornada: {{ curso.hora_inicio_jornada|time:"g:i A"|default:'No definida' }} — {{ curso.hora_fin_jornada|time:"g:i A"|default:'No definida' }}
+        · Clase: {{ dur_clase }} min
+        {% for d in descansos %}· Descanso {{ d.num }}: {{ d.dur }} min{% endfor %}
+        (<a href="{% url 'curso_editar' curso.pk %}" class="text-decoration-none">Cambiar</a>)
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle small" id="tabla-horarios" data-dur-clase="{{ dur_clase }}" data-desc1="{{ descansos.0.dur|default:10 }}" data-desc2="{{ descansos.1.dur|default:10 }}" data-desc3="{{ descansos.2.dur|default:30 }}">
+            <thead class="table-dark text-center">
+              <tr>
+                <th style="width:3%;">#</th>
+                <th style="width:11%;">Inicio</th>
+                <th style="width:11%;">Fin</th>
+                {% for d in dias %}
+                <th style="width:15%;">Día {{ d }}</th>
+                {% endfor %}
+                <th style="width:4%;"></th>
+              </tr>
+            </thead>
+            <tbody id="tabla-body">
+              {% for tiempo, dias_data in filas %}
+              <tr class="fila-horario">
+                <td class="text-center fw-semibold num-fila">{{ forloop.counter }}</td>
+                <td><input type="time" name="inicio_{{ forloop.counter0 }}" value="{{ tiempo.0|time:'H:i' }}" class="form-control form-control-sm inicio-input"></td>
+                <td><input type="time" name="fin_{{ forloop.counter0 }}" value="{{ tiempo.1|time:'H:i' }}" class="form-control form-control-sm fin-input" readonly style="background:#f8f9fa;cursor:default;"></td>
+                {% for d in dias %}
+                {% with val=dias_data|get_item:d %}
+                <td class="p-1">
+                  <select name="val_{{ forloop.parentloop.counter0 }}_{{ d }}" class="form-select form-select-sm slot-select">
+                    <option value="" {% if not val %}selected{% endif %}>— Vacío —</option>
+                    {% for desc in descansos %}
+                    <option value="d{{ desc.num }}" {% if val|slice:'1:' == desc.num|stringformat:'s' %}selected{% endif %} data-dur="{{ desc.dur }}">
+                      Descanso {{ desc.num }} ({{ desc.dur }} min)
+                    </option>
+                    {% endfor %}
+                    {% for cm in cm_list %}
+                    <option value="{{ cm.id }}" {% if val == cm.id|stringformat:'s' %}selected{% endif %}>{{ cm.materia.nombre }}</option>
+                    {% endfor %}
+                  </select>
+                </td>
+                {% endwith %}
+                {% endfor %}
+                <td class="text-center">
+                  <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove();renumerar();"><i class="fas fa-times"></i></button>
+                </td>
+                <input type="hidden" name="idx" value="{{ forloop.counter0 }}">
+              </tr>
+              {% empty %}
+              <tr class="fila-horario">
+                <td class="text-center fw-semibold num-fila">1</td>
+                <td><input type="time" name="inicio_0" value="08:00" class="form-control form-control-sm inicio-input"></td>
+                <td><input type="time" name="fin_0" class="form-control form-control-sm fin-input" readonly style="background:#f8f9fa;cursor:default;"></td>
+                {% for d in dias %}
+                <td class="p-1">
+                  <select name="val_0_{{ d }}" class="form-select form-select-sm slot-select">
+                    <option value="" selected>— Vacío —</option>
+                    {% for desc in descansos %}
+                    <option value="d{{ desc.num }}" data-dur="{{ desc.dur }}">Descanso {{ desc.num }} ({{ desc.dur }} min)</option>
+                    {% endfor %}
+                    {% for cm in cm_list %}
+                    <option value="{{ cm.id }}">{{ cm.materia.nombre }}</option>
+                    {% endfor %}
+                  </select>
+                </td>
+                {% endfor %}
+                <td class="text-center">
+                  <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove();renumerar();"><i class="fas fa-times"></i></button>
+                </td>
+                <input type="hidden" name="idx" value="0">
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-2 d-flex gap-2">
+          <button type="button" class="btn btn-sm btn-outline-primary" onclick="agregarFila()"><i class="fas fa-plus"></i> Agregar fila</button>
+        </div>
+        <div class="mt-3 d-flex gap-2">
+          <button type="submit" class="btn btn-success px-4"><i class="fas fa-save"></i> Guardar Horarios</button>
+          <a href="{% url 'cursos_list' %}" class="btn btn-outline-secondary">Volver</a>
+        </div>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+var contador = {{ contador }};
+var tabla = document.getElementById('tabla-horarios');
+var durClase = parseInt(tabla.dataset.durClase) || 45;
+var dursDesc = [
+    0,
+    parseInt(tabla.dataset.desc1) || 10,
+    parseInt(tabla.dataset.desc2) || 10,
+    parseInt(tabla.dataset.desc3) || 30,
+];
+
+function calcFin(inicioVal, val) {
+    if (!inicioVal || !val) return '';
+    var partes = inicioVal.split(':');
+    var mins = parseInt(partes[0]) * 60 + parseInt(partes[1]);
+    var extra = durClase;
+    if (val === 'd1') extra = dursDesc[1];
+    else if (val === 'd2') extra = dursDesc[2];
+    else if (val === 'd3') extra = dursDesc[3];
+    mins += extra;
+    var h = Math.floor(mins / 60);
+    var m = mins % 60;
+    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+}
+
+function cascadear(desde) {
+    var filas = document.querySelectorAll('#tabla-body .fila-horario');
+    var idx = Array.from(filas).indexOf(desde);
+    for (var i = idx + 1; i < filas.length; i++) {
+        var anteriorFin = filas[i - 1].querySelector('.fin-input').value;
+        if (anteriorFin) {
+            filas[i].querySelector('.inicio-input').value = anteriorFin;
+            var val = '';
+            filas[i].querySelectorAll('.slot-select').forEach(function(s) {
+                if (s.value && !val) val = s.value;
+            });
+            if (val) {
+                filas[i].querySelector('.fin-input').value = calcFin(anteriorFin, val);
+            }
+        }
+    }
+}
+
+function actualizarFin(tr, val) {
+    var inicio = tr.querySelector('.inicio-input').value;
+    if (!inicio || !val) {
+        tr.querySelector('.fin-input').value = '';
+        return;
+    }
+    tr.querySelector('.fin-input').value = calcFin(inicio, val);
+    cascadear(tr);
+}
+
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('slot-select')) {
+        var tr = e.target.closest('tr');
+        var val = e.target.value;
+        if (!val) {
+            tr.querySelectorAll('.slot-select').forEach(function(s) {
+                if (s.value && !val) val = s.value;
+            });
+        }
+        actualizarFin(tr, val);
+    }
+});
+
+document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('inicio-input')) {
+        var tr = e.target.closest('tr');
+        var val = '';
+        tr.querySelectorAll('.slot-select').forEach(function(s) {
+            if (s.value && !val) val = s.value;
+        });
+        actualizarFin(tr, val);
+    }
+});
+
+actualizarFinTabla();
+function actualizarFinTabla() {
+    var filas = document.querySelectorAll('#tabla-body .fila-horario');
+    filas.forEach(function(tr) {
+        var val = '';
+        tr.querySelectorAll('.slot-select').forEach(function(s) {
+            if (s.value && !val) val = s.value;
+        });
+        if (val) actualizarFin(tr, val);
+    });
+    if (filas.length) cascadear(filas[0]);
+}
+
+function agregarFila() {
+    var tbody = document.getElementById('tabla-body');
+    var ultimaFila = tbody.querySelector('.fila-horario:last-child');
+    var inicioDefault = '08:00';
+    if (ultimaFila) {
+        var finUlt = ultimaFila.querySelector('.fin-input').value;
+        if (finUlt) inicioDefault = finUlt;
+    }
+    var tr = document.createElement('tr');
+    tr.className = 'fila-horario';
+    var diasHtml = '';
+    {% for d in dias %}
+    diasHtml += '<td class="p-1"><select name="val_' + contador + '_{{ d }}" class="form-select form-select-sm slot-select">' +
+        '<option value="">— Vacío —</option>' +
+        {% for desc in descansos %}'<option value="d{{ desc.num }}" data-dur="{{ desc.dur }}">Descanso {{ desc.num }} ({{ desc.dur }} min)</option>' +{% endfor %}
+        {% for cm in cm_list %}'<option value="{{ cm.id }}">{{ cm.materia.nombre }}</option>' +{% endfor %}
+        '</select></td>';
+    {% endfor %}
+    tr.innerHTML =
+        '<td class="text-center fw-semibold num-fila">' + (contador + 1) + '</td>' +
+        '<td><input type="time" name="inicio_' + contador + '" value="' + inicioDefault + '" class="form-control form-control-sm inicio-input"></td>' +
+        '<td><input type="time" name="fin_' + contador + '" class="form-control form-control-sm fin-input" readonly style="background:#f8f9fa;cursor:default;"></td>' +
+        diasHtml +
+        '<td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest(\'tr\').remove();renumerar();"><i class="fas fa-times"></i></button></td>' +
+        '<input type="hidden" name="idx" value="' + contador + '">';
+    tbody.appendChild(tr);
+    contador++;
+}
+
+function renumerar() {
+    document.querySelectorAll('#tabla-body .num-fila').forEach(function(el, i) {
+        el.textContent = i + 1;
+    });
+}
+</script>
+{% endblock %}

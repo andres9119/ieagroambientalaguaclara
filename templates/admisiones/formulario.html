@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Admisiones - Colegio Web{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-5 text-center">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-4 fw-bold text-primary-custom">Admisiones</h1>
+                <p class="lead text-muted">Da el primer paso para formar parte de nuestra comunidad educativa.</p>
+                <div class="divider mx-auto bg-secondary-custom my-4"
+                    style="width: 100px; height: 5px; border-radius: 3px;"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Steps Column -->
+            <div class="col-lg-5 mb-4 mb-lg-0">
+                <div class="p-4 bg-light rounded shadow-sm h-100">
+                    <h3 class="mb-4 text-primary-custom">Proceso de Admisión</h3>
+                    <ul class="list-group list-group-flush bg-transparent">
+                        <li class="list-group-item bg-transparent d-flex align-items-start border-0 ps-0">
+                            <span class="badge bg-primary-custom rounded-circle me-3 flex-shrink-0"
+                                style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">1</span>
+                            <div>
+                                <h5 class="fw-bold">Preinscripción</h5>
+                                <p class="text-muted small">Completa el formulario en esta página con los datos del
+                                    estudiante y acudiente.</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item bg-transparent d-flex align-items-start border-0 ps-0">
+                            <span class="badge bg-primary-custom rounded-circle me-3 flex-shrink-0"
+                                style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">2</span>
+                            <div>
+                                <h5 class="fw-bold">Entrevista</h5>
+                                <p class="text-muted small">Te contactaremos para programar una entrevista con el
+                                    departamento de psicología.</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item bg-transparent d-flex align-items-start border-0 ps-0">
+                            <span class="badge bg-primary-custom rounded-circle me-3 flex-shrink-0"
+                                style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">3</span>
+                            <div>
+                                <h5 class="fw-bold">Matrícula</h5>
+                                <p class="text-muted small">Una vez admitido, formaliza la matrícula entregando la
+                                    documentación requerida.</p>
+                            </div>
+                        </li>
+                    </ul>
+                    <div
+                        class="mt-4 p-3 bg-white rounded border border-start-0 border-end-0 border-top-0 border-4 border-warning">
+                        <p class="mb-0 small text-muted"><i class="fas fa-info-circle me-2 text-warning"></i>Si tienes
+                            dudas, contacta a nuestra oficina de admisiones al +1 234 567 8900.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Column -->
+            <div class="col-lg-7">
+                <div class="card shadow border-0">
+                    <div class="card-header bg-primary-custom text-white p-4">
+                        <h3 class="mb-0"><i class="fas fa-file-alt me-2"></i>Formulario de Preinscripción</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {% for field in form %}
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                <div class="form-text text-muted">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% if field.errors %}
+                                <div class="alert alert-danger mt-1 py-1 px-3 small">
+                                    {{ field.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-secondary btn-lg fw-bold shadow-sm">Enviar
+                                    Solicitud <i class="fas fa-paper-plane ms-2"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

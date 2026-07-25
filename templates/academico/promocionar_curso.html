@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Promocionar: {{ curso_origen.nombre }}{% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'cursos_list' %}">Cursos</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Promocionar {{ curso_origen.nombre }}</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="card border rounded-3">
+    <div class="card-body p-4">
+      <h4 class="mb-1">Promocionar Estudiantes</h4>
+      <p class="text-muted mb-3">
+        Curso origen: <strong>{{ curso_origen.nombre }}</strong> ({{ curso_origen.nivel }})
+        &middot; {{ estudiantes.count }} estudiante(s) activo(s)
+      </p>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="row g-3 mb-4">
+          <div class="col-md-5">
+            <label class="form-label fw-semibold">Curso destino</label>
+            <select name="curso_destino" class="form-select" required>
+              <option value="">--- Seleccionar ---</option>
+              {% for c in cursos_destino %}
+              <option value="{{ c.id }}">{{ c.nombre }} ({{ c.nivel }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-semibold">Año lectivo destino</label>
+            <input type="number" name="anio_destino" class="form-control" value="{{ prox_anio }}">
+          </div>
+          <div class="col-md-4 d-flex align-items-end">
+            <div class="form-check">
+              <input type="checkbox" name="desactivar_origen" id="desactivar_origen" class="form-check-input" checked>
+              <label class="form-check-label" for="desactivar_origen">Desactivar matrículas actuales</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <div class="form-check">
+            <input type="checkbox" id="seleccionar_todos" class="form-check-input" onchange="document.querySelectorAll('.est-check').forEach(c=>c.checked=this.checked)">
+            <label class="form-check-label fw-semibold" for="seleccionar_todos">Seleccionar todos</label>
+          </div>
+          <span class="text-muted small">({{ estudiantes.count }} estudiante(s))</span>
+        </div>
+
+        <div class="list-group mb-4" style="max-height:400px;overflow-y:auto;">
+          {% for e in estudiantes %}
+          <label class="list-group-item d-flex align-items-center gap-2">
+            <input type="checkbox" name="estudiantes" value="{{ e.id }}" class="est-check">
+            <span>{{ e.usuario.get_full_name|default:e.usuario.username }}</span>
+            <small class="text-muted ms-auto">{{ e.usuario.username }}</small>
+          </label>
+          {% empty %}
+          <div class="list-group-item text-muted">No hay estudiantes activos en este curso.</div>
+          {% endfor %}
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-info text-white px-4" {% if not estudiantes %}disabled{% endif %}>
+            <i class="fas fa-arrow-right"></i> Promocionar Seleccionados
+          </button>
+          <a href="{% url 'cursos_list' %}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

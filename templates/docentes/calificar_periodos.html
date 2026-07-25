@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+{% block title %}Calificaciones - {{ asignacion.materia.nombre }}{% endblock %}
+{% block content %}
+<div class="container-fluid py-4 px-lg-5">
+
+    <!-- Header -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb" class="mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" class="text-decoration-none">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'mis_cursos' %}" class="text-decoration-none">Mis Cursos</a></li>
+                    <li class="breadcrumb-item active">{{ asignacion.materia.nombre }}</li>
+                </ol>
+            </nav>
+            <h1 class="fw-bold mb-1" style="font-size:1.8rem; color: var(--primary-color);">
+                <i class="fas fa-graduation-cap me-2 text-warning"></i>{{ asignacion.materia.nombre }}
+                <span class="text-muted fs-5 ms-2">| {{ asignacion.curso.nombre }}</span>
+            </h1>
+            <p class="text-muted mb-0">
+                <i class="fas fa-users me-1"></i>{{ tabla|length }} estudiantes
+                &nbsp;·&nbsp;<i class="fas fa-calendar-alt me-1"></i>Año {{ asignacion.anio_lectivo }}
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a href="{% url 'gestionar_asistencia' asignacion.id %}" class="btn btn-outline-info btn-sm me-2">
+                <i class="fas fa-calendar-check me-1"></i>Asistencia
+            </a>
+            <a href="{% url 'exportar_notas_csv' asignacion.id %}" class="btn btn-outline-success btn-sm">
+                <i class="fas fa-file-excel me-1"></i>Exportar CSV
+            </a>
+        </div>
+    </div>
+
+    <!-- Info card -->
+    <div class="alert alert-primary border-0 shadow-sm mb-4 d-flex align-items-center gap-3" style="border-radius:12px;">
+        <i class="fas fa-info-circle fa-lg"></i>
+        <div>
+            <strong>Registro de calificaciones por periodo.</strong>
+            Ingresa la nota de cada estudiante (0.0 – 5.0) para cada periodo académico. El promedio anual se calcula automáticamente.
+        </div>
+    </div>
+
+    <!-- Tabla de calificaciones -->
+    <form method="post" id="form-notas">
+        {% csrf_token %}
+        <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
+            <div class="card-header bg-white py-3 px-4 border-0">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="fw-bold mb-0"><i class="fas fa-list-ol me-2 text-primary"></i>Planilla de Calificaciones</h5>
+                    <div class="d-flex gap-2">
+                        <button type="button" id="btn-toggle-obs" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-comment-alt me-1"></i>Observaciones
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-sm px-4 shadow-sm">
+                            <i class="fas fa-save me-1"></i>Guardar Notas
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 grade-table">
+                    <thead>
+                        <tr>
+                            <th class="ps-4 student-col">Estudiante</th>
+                            <th class="text-center period-col p1-col">
+                                <span class="period-badge p1-badge">P1</span>
+                            </th>
+                            <th class="text-center period-col p2-col">
+                                <span class="period-badge p2-badge">P2</span>
+                            </th>
+                            <th class="text-center period-col p3-col">
+                                <span class="period-badge p3-badge">P3</span>
+                            </th>
+                            <th class="text-center period-col p4-col">
+                                <span class="period-badge p4-badge">P4</span>
+                            </th>
+                            <th class="text-center annual-col">Promedio Anual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in tabla %}
+                        <tr class="student-row">
+                            <td class="ps-4 student-col">
+                                <div class="d-flex align-items-center">
+                                    <div class="student-avatar me-3">
+                                        {{ row.estudiante.display_name|slice:":1"|upper }}
+                                    </div>
+                                    <div>
+                                        <span class="fw-semibold d-block">{{ row.estudiante.display_name }}</span>
+                                        <small class="text-muted">Estudiante: {{ row.estudiante.usuario.username }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            {% for col in row.cols %}
+                            <td class="text-center period-col p{{ col.periodo }}-col">
+                                <div class="grade-cell">
+                                    <input type="number"
+                                        name="nota_{{ row.estudiante.id }}_{{ col.periodo }}"
+                                        class="grade-input p{{ col.periodo }}-input"
+                                        step="0.01" min="0" max="5"
+                                        {% if col.calif and col.calif.nota > 0 %}value="{{ col.calif.nota|stringformat:'s'|default:''|safe }}"{% else %}value=""{% endif %}
+                                        placeholder="—">
+                                    <div class="obs-field" style="display:none;">
+                                        <textarea name="obs_{{ row.estudiante.id }}_{{ col.periodo }}"
+                                            class="obs-input mt-1"
+                                            placeholder="Observación P{{ col.periodo }}..."
+                                            rows="1">{% if col.calif %}{{ col.calif.observaciones }}{% endif %}</textarea>
+                                    </div>
+                                </div>
+                            </td>
+                            {% endfor %}
+                            <td class="text-center annual-col">
+                                <span class="annual-badge {% if row.promedio_anual >= 3.0 %}bg-success{% elif row.promedio_anual > 0 %}bg-danger{% else %}bg-secondary{% endif %}">
+                                    {% if row.promedio_anual > 0 %}{{ row.promedio_anual }}{% else %}—{% endif %}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <i class="fas fa-user-slash fa-3x text-muted opacity-25 mb-3 d-block"></i>
+                                <span class="text-muted">No hay estudiantes matriculados en este curso.</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Objectives card inside form -->
+        <div class="card border-0 shadow-sm mb-4" style="border-radius:16px;">
+            <div class="card-header bg-white py-3 px-4 border-0">
+                <h5 class="fw-bold mb-0"><i class="fas fa-bullseye me-2 text-warning"></i>Objetivos del periodo por materia</h5>
+            </div>
+            <div class="card-body px-4 py-3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="fw-semibold small mb-1" style="color:var(--p1-color, #4f46e5);">Periodo 1</label>
+                        <textarea name="objetivo_p1" class="form-control form-control-sm" rows="2" placeholder="Objetivos del periodo 1 para {{ asignacion.materia.nombre }}..."
+                            style="border-color:var(--p1-color, #4f46e5);">{{ asignacion.objetivo_p1 }}</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-semibold small mb-1" style="color:var(--p2-color, #0ea5e9);">Periodo 2</label>
+                        <textarea name="objetivo_p2" class="form-control form-control-sm" rows="2" placeholder="Objetivos del periodo 2 para {{ asignacion.materia.nombre }}..."
+                            style="border-color:var(--p2-color, #0ea5e9);">{{ asignacion.objetivo_p2 }}</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-semibold small mb-1" style="color:var(--p3-color, #10b981);">Periodo 3</label>
+                        <textarea name="objetivo_p3" class="form-control form-control-sm" rows="2" placeholder="Objetivos del periodo 3 para {{ asignacion.materia.nombre }}..."
+                            style="border-color:var(--p3-color, #10b981);">{{ asignacion.objetivo_p3 }}</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-semibold small mb-1" style="color:var(--p4-color, #f59e0b);">Periodo 4</label>
+                        <textarea name="objetivo_p4" class="form-control form-control-sm" rows="2" placeholder="Objetivos del periodo 4 para {{ asignacion.materia.nombre }}..."
+                            style="border-color:var(--p4-color, #f59e0b);">{{ asignacion.objetivo_p4 }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer bg-white py-3 px-4 d-flex justify-content-between align-items-center border-0">
+            <a href="{% url 'mis_cursos' %}" class="btn btn-outline-secondary px-4">
+                    <i class="fas fa-arrow-left me-2"></i>Volver
+                </a>
+                <button type="submit" class="btn btn-primary px-5 shadow-sm">
+                    <i class="fas fa-save me-2"></i>Guardar Calificaciones
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    :root {
+        --p1-color: #4f46e5;
+        --p2-color: #0ea5e9;
+        --p3-color: #10b981;
+        --p4-color: #f59e0b;
+    }
+
+    .grade-table thead tr th {
+        background: #f8fafc;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #64748b;
+        border-bottom: 2px solid #e2e8f0;
+        padding: 14px 8px;
+    }
+
+    .grade-table tbody tr {
+        transition: background 0.15s ease;
+    }
+
+    .grade-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .student-col {
+        width: 28%;
+        min-width: 200px;
+    }
+
+    .period-col {
+        width: 13%;
+        min-width: 110px;
+    }
+
+    .annual-col {
+        width: 13%;
+        min-width: 110px;
+    }
+
+    .period-badge {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 50%;
+        font-weight: 800;
+        font-size: 0.7rem;
+        color: white;
+    }
+
+    .p1-badge { background: var(--p1-color); }
+    .p2-badge { background: var(--p2-color); }
+    .p3-badge { background: var(--p3-color); }
+    .p4-badge { background: var(--p4-color); }
+
+    .student-avatar {
+        width: 38px;
+        height: 38px;
+        background: linear-gradient(135deg, var(--p1-color), var(--p2-color));
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .grade-cell {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .grade-input {
+        width: 80px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 6px 4px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+        background: #f8fafc;
+        -moz-appearance: textfield;
+    }
+
+    .grade-input::-webkit-outer-spin-button,
+    .grade-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .p1-input:focus { border-color: var(--p1-color); box-shadow: 0 0 0 3px rgba(79,70,229,0.12); transform: scale(1.05); }
+    .p2-input:focus { border-color: var(--p2-color); box-shadow: 0 0 0 3px rgba(14,165,233,0.12); transform: scale(1.05); }
+    .p3-input:focus { border-color: var(--p3-color); box-shadow: 0 0 0 3px rgba(16,185,129,0.12); transform: scale(1.05); }
+    .p4-input:focus { border-color: var(--p4-color); box-shadow: 0 0 0 3px rgba(245,158,11,0.12); transform: scale(1.05); }
+
+    .grade-input.is-low { border-color: #ef4444 !important; background: #fff5f5; color: #ef4444; }
+    .grade-input.is-ok  { border-color: #22c55e !important; background: #f0fdf4; color: #16a34a; }
+
+    .obs-input {
+        width: 100%;
+        font-size: 0.72rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 4px 6px;
+        resize: none;
+        color: #64748b;
+    }
+
+    .annual-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        color: white;
+        font-weight: 700;
+        font-size: 0.9rem;
+        min-width: 60px;
+        text-align: center;
+    }
+
+    /* Keyboard shortcuts hints */
+    .grade-table td {
+        border-bottom: 1px solid #f1f5f9;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Toggle observaciones
+    const btnToggleObs = document.getElementById('btn-toggle-obs');
+    const obsFields = document.querySelectorAll('.obs-field');
+    let obsVisible = false;
+
+    btnToggleObs.addEventListener('click', function () {
+        obsVisible = !obsVisible;
+        obsFields.forEach(f => f.style.display = obsVisible ? 'block' : 'none');
+        btnToggleObs.innerHTML = obsVisible
+            ? '<i class="fas fa-eye-slash me-1"></i>Ocultar Obs.'
+            : '<i class="fas fa-comment-alt me-1"></i>Observaciones';
+    });
+
+    // Color coding and validation on input
+    const gradeInputs = document.querySelectorAll('.grade-input');
+    gradeInputs.forEach(function (inp) {
+        inp.addEventListener('input', function () {
+            const val = parseFloat(this.value);
+            this.classList.remove('is-low', 'is-ok');
+            if (!isNaN(val)) {
+                if (val < 3.0) this.classList.add('is-low');
+                else this.classList.add('is-ok');
+                if (val > 5) this.value = 5;
+                if (val < 0) this.value = 0;
+            }
+        });
+        // Trigger on load
+        if (inp.value) inp.dispatchEvent(new Event('input'));
+    });
+
+    // Tab/Enter navigation between inputs
+    gradeInputs.forEach(function (inp, idx) {
+        inp.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === 'Tab') {
+                e.preventDefault();
+                const next = gradeInputs[idx + 1];
+                if (next) next.focus();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

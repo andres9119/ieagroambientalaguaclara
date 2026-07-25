@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Actividades - {{ asignacion.materia.nombre }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'mis_cursos' %}">Mis Cursos</a></li>
+                    <li class="breadcrumb-item active">{{ asignacion.curso.nombre }}</li>
+                </ol>
+            </nav>
+            <h1 class="display-5 fw-bold text-primary-custom">{{ asignacion.materia.nombre }}</h1>
+            <p class="lead text-muted">Gestión de Actividades (Periodo {{ periodo }})</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'actividad_crear' asignacion.id %}?periodo={{ periodo }}"
+                class="btn btn-primary btn-lg shadow-sm">
+                <i class="fas fa-plus me-2"></i>Nueva Actividad
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 border-0">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link {% if periodo == '1' %}active fw-bold{% endif %}" href="?periodo=1">P1</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if periodo == '2' %}active fw-bold{% endif %}" href="?periodo=2">P2</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if periodo == '3' %}active fw-bold{% endif %}" href="?periodo=3">P3</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if periodo == '4' %}active fw-bold{% endif %}" href="?periodo=4">P4</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Nombre de la Actividad</th>
+                            <th>Tipo</th>
+                            <th>Fecha</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for actividad in actividades %}
+                        <tr>
+                            <td>
+                                <span class="fw-bold text-dark">{{ actividad.nombre }}</span>
+                            </td>
+                            <td>
+                                {% if actividad.tipo == 'SABER' %}
+                                <span class="badge bg-info text-dark">Saber</span>
+                                {% else %}
+                                <span class="badge bg-success text-white">Hacer</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ actividad.fecha|date:"d/m/Y" }}</td>
+                            <td class="text-center">
+                                <a href="{% url 'actividad_calificar' actividad.id %}"
+                                    class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit me-1"></i>Calificar
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5">
+                                <p class="text-muted mb-3">No hay actividades creadas para este periodo.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-light p-3">
+            <a href="{% url 'gestionar_notas' asignacion.id %}?periodo={{ periodo }}"
+                class="btn btn-link text-decoration-none">
+                <i class="fas fa-arrow-left me-2"></i>Ir al Consolidado Final
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

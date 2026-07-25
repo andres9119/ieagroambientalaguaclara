@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Noticias y Eventos - Colegio Web{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="py-5 bg-light">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold text-primary-custom mb-3">Noticias y Eventos</h1>
+        <p class="lead text-muted">Mantente informado sobre las últimas novedades de nuestra comunidad educativa</p>
+        <div class="divider mx-auto bg-secondary-custom my-4" style="width: 80px; height: 4px;"></div>
+    </div>
+</section>
+
+<!-- Noticias List -->
+<section class="py-5">
+    <div class="container">
+        {% if noticias %}
+        <div class="row">
+            {% for noticia in noticias %}
+            <div class="col-12 mb-4">
+                <div class="card border-0 shadow-sm hover-lift h-100">
+                    <div class="row g-0">
+                        <!-- Imagen -->
+                        <div class="col-md-4">
+                            {% if noticia.imagen %}
+                            <img src="{{ noticia.imagen.url }}" class="img-fluid w-100 h-100 rounded-start"
+                                style="object-fit: cover; min-height: 250px; max-height: 300px;"
+                                alt="{{ noticia.titulo }}">
+                            {% else %}
+                            <div class="bg-primary-custom text-white d-flex align-items-center justify-content-center rounded-start"
+                                style="min-height: 250px; max-height: 300px; height: 100%;">
+                                <i class="fas fa-newspaper fa-5x opacity-50"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Contenido -->
+                        <div class="col-md-8">
+                            <div class="card-body p-4 d-flex flex-column h-100">
+                                <div class="mb-2">
+                                    <span class="badge bg-secondary-custom text-dark">
+                                        <i class="far fa-calendar-alt me-1"></i>
+                                        {{ noticia.fecha_publicacion|date:"d \d\e F \d\e Y" }}
+                                    </span>
+                                </div>
+
+                                <h3 class="card-title fw-bold text-primary-custom mb-3">
+                                    {{ noticia.titulo }}
+                                </h3>
+
+                                <p class="card-text text-muted mb-4 flex-grow-1">
+                                    {% if noticia.resumen %}
+                                    {{ noticia.resumen }}
+                                    {% else %}
+                                    {{ noticia.contenido|truncatewords:30 }}
+                                    {% endif %}
+                                </p>
+
+                                <div class="mt-auto">
+                                    <a href="{% url 'noticia_detail' noticia.pk %}" class="btn btn-primary">
+                                        Leer más <i class="fas fa-arrow-right ms-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-newspaper fa-5x text-muted opacity-50"></i>
+            </div>
+            <h3 class="text-muted">No hay noticias publicadas</h3>
+            <p class="text-muted">Pronto compartiremos novedades de nuestra comunidad educativa.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% block title %}Panel de Control - {{ asignacion.materia.nombre }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb" class="mb-2">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"
+                            class="text-decoration-none">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'mis_cursos' %}" class="text-decoration-none">Mis
+                            Cursos</a></li>
+                    <li class="breadcrumb-item active">{{ asignacion.curso.nombre }}</li>
+                </ol>
+            </nav>
+            <h1 class="display-5 fw-bold text-primary-custom">{{ asignacion.materia.nombre }} <span
+                    class="text-muted fs-4">| {{ asignacion.curso.nombre }}</span></h1>
+            <div class="d-flex gap-3">
+                <span class="badge bg-primary px-3 py-2 rounded-pill"><i class="fas fa-calendar-alt me-2"></i>Periodo {{
+                    periodo }}</span>
+                <span class="text-muted"><i class="fas fa-users me-2"></i>{{ asignacion.curso.get_estudiantes_count }}
+                    Estudiantes</span>
+            </div>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <div class="btn-group shadow-sm">
+                <a href="?periodo=1" class="btn btn-outline-primary {% if periodo == '1' %}active{% endif %}">P1</a>
+                <a href="?periodo=2" class="btn btn-outline-primary {% if periodo == '2' %}active{% endif %}">P2</a>
+                <a href="?periodo=3" class="btn btn-outline-primary {% if periodo == '3' %}active{% endif %}">P3</a>
+                <a href="?periodo=4" class="btn btn-outline-primary {% if periodo == '4' %}active{% endif %}">P4</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Content: Grades Table -->
+        <div class="col-lg-9">
+            <div class="card shadow-sm border-0 mb-4 overflow-hidden">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-list-ol me-2 text-primary"></i>Consolidado de
+                        Calificaciones</h5>
+                    <div>
+                        <a href="{% url 'exportar_notas_csv' asignacion.id %}?periodo={{ periodo }}"
+                            class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-download me-1"></i> Excel/CSV
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ formset.management_form }}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light-header">
+                                    <tr>
+                                        <th class="ps-4">Estudiante</th>
+                                        <th class="text-center">Saber Acc. (25%)</th>
+                                        <th class="text-center">Eval. Final (20%)</th>
+                                        <th class="text-center">Hacer (45%)</th>
+                                        <th class="text-center">Comport. (5%)</th>
+                                        <th class="text-center bg-primary text-white">TOTAL</th>
+                                        <th class="pe-4">Observaciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for form in formset %}
+                                    <tr>
+                                        <td class="ps-4">
+                                            <span class="fw-bold">{{ form.instance.estudiante.display_name }}</span>
+                                            {{ form.id }}
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-muted">{{ form.instance.nota_saber_acumulada }}</span>
+                                        </td>
+                                        <td>{{ form.nota_saber_final }}</td>
+                                        <td class="text-center">
+                                            <span class="text-muted">{{ form.instance.nota_hacer }}</span>
+                                        </td>
+                                        <td>{{ form.nota_ser_comportamiento }}</td>
+                                        <td class="text-center fw-bold bg-light">
+                                            {{ form.instance.nota }}
+                                        </td>
+                                        <td class="pe-4">{{ form.observaciones }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-3 bg-light text-end">
+                            <button type="submit" class="btn btn-primary px-5 shadow-sm">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios del Consolidado
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar: Activities & Quick Actions -->
+        <div class="col-lg-3">
+            <!-- Quick Actions -->
+            <div class="card shadow-sm border-0 mb-4 bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h5>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'actividad_crear' asignacion.id %}?periodo={{ periodo }}"
+                            class="btn btn-light text-primary fw-bold">
+                            <i class="fas fa-plus-circle me-2"></i>Nueva Actividad
+                        </a>
+                        <a href="{% url 'gestionar_asistencia' asignacion.id %}" class="btn btn-primary-light border-0">
+                            <i class="fas fa-calendar-check me-2"></i>Tomar Asistencia
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activities Section -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-tasks me-2 text-info"></i>Actividades P{{ periodo }}</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for actividad in actividades %}
+                        <div class="list-group-item p-3 border-0 border-bottom">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <span
+                                    class="badge {% if actividad.tipo == 'SABER' %}bg-info{% else %}bg-warning text-dark{% endif %} mb-1">
+                                    {{ actividad.get_tipo_display }}
+                                </span>
+                                <small class="text-muted">{{ actividad.fecha|date:"d M" }}</small>
+                            </div>
+                            <h6 class="mb-2 fw-bold">{{ actividad.nombre }}</h6>
+                            <a href="{% url 'actividad_calificar' actividad.id %}"
+                                class="btn btn-sm btn-outline-primary w-100">
+                                <i class="fas fa-pen me-1"></i> Calificar
+                            </a>
+                        </div>
+                        {% empty %}
+                        <div class="p-4 text-center text-muted">
+                            <i class="fas fa-info-circle mb-2 fa-2x opacity-25"></i>
+                            <p class="small mb-0">No hay actividades registradas en este periodo.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-center">
+                    <a href="{% url 'actividades_lista' asignacion.id %}?periodo={{ periodo }}"
+                        class="btn btn-link btn-sm text-decoration-none">
+                        Ver todas las actividades
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-light-header {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-primary-light {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .btn-primary-light:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+
+    input[type="number"] {
+        max-width: 60px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+
+    textarea {
+        font-size: 0.85rem;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        height: 35px;
+        width: 100%;
+        padding: 5px;
+    }
+</style>
+{% endblock %}

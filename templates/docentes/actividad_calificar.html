@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Calificar {{ actividad.nombre }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-9">
+            <h1 class="display-5 fw-bold text-primary-custom">{{ actividad.nombre }}</h1>
+            <p class="lead text-muted">
+                <i class="fas fa-layer-group me-2"></i>{{ actividad.curso_materia.materia }} |
+                <span class="badge bg-secondary">{{ actividad.get_tipo_display }}</span> |
+                Periodo {{ actividad.periodo }}
+            </p>
+        </div>
+        <div class="col-md-3 text-md-end">
+            <a href="{% url 'actividades_lista' actividad.curso_materia.id %}?periodo={{ actividad.periodo }}"
+                class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Volver
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <form method="post">
+                {% csrf_token %}
+                {{ formset.management_form }}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4" style="width: 40%">Estudiante</th>
+                                <th class="text-center" style="width: 20%">Calificación (0.0 - 5.0)</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for form in formset %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width: 35px; height: 35px; font-weight: bold;">
+                                            {{ form.instance.estudiante.display_name|slice:":1"|upper }}
+                                        </div>
+                                        <span class="fw-bold">{{ form.instance.estudiante.display_name }}</span>
+                                    </div>
+                                    {{ form.id }}
+                                </td>
+                                <td>{{ form.nota }}</td>
+                                <td>
+                                    {% if form.instance.nota > 0 %}
+                                    <span class="text-success small"><i
+                                            class="fas fa-check-circle me-1"></i>Calificado</span>
+                                    {% else %}
+                                    <span class="text-warning small"><i class="fas fa-clock me-1"></i>Pendiente</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer bg-white p-4 text-end border-top-0">
+                    <button type="submit" class="btn btn-primary btn-lg px-5 shadow-sm">Guardar Calificaciones</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

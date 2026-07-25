@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Mi Asistencia</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="table-info">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Observación</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for asistencia in asistencias %}
+                <tr>
+                    <td>{{ asistencia.fecha }}</td>
+                    <td>
+                        {% if asistencia.asistio %}
+                        <span class="text-success"><i class="bi bi-check-circle-fill"></i> Asistió</span>
+                        {% else %}
+                        <span class="text-danger"><i class="bi bi-x-circle-fill"></i> Falló</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ asistencia.observacion }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">No hay registros de asistencia.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-3">Volver al Dashboard</a>
+</div>
+{% endblock %}

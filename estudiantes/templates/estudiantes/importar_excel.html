@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Importar estudiantes desde Excel{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Importar estudiantes</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary-custom text-white py-3">
+                    <h4 class="mb-0 fw-bold"><i class="fas fa-file-excel me-2"></i>Importar estudiantes desde Excel</h4>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted">Sube un archivo .xlsx con el formato SIMAT. Columnas mínimas requeridas: <strong>DOC, TIPODOC, NOMBRE1, APELLIDO1, GRUPO</strong>.</p>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="archivo" class="form-label fw-semibold">Archivo Excel (.xlsx)</label>
+                            <input type="file" name="archivo" id="archivo" class="form-control" accept=".xlsx" required>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="anio" class="form-label fw-semibold">Año lectivo</label>
+                                <input type="number" name="anio" id="anio" class="form-control" value="2026" min="2020" max="2030">
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <div class="form-check">
+                                    <input type="checkbox" name="dry_run" id="dry_run" class="form-check-input" value="1">
+                                    <label for="dry_run" class="form-check-label">Solo simular (no guardar)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary-custom px-4">
+                                <i class="fas fa-upload me-2"></i>Importar
+                            </button>
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary px-4">Cancelar</a>
+                        </div>
+                    </form>
+
+                    {% if resultado %}
+                    <div class="mt-4">
+                        <h5 class="fw-bold mb-2">Resultado:</h5>
+                        <pre class="bg-light p-3 rounded border" style="max-height: 400px; overflow-y: auto; font-size: 13px; white-space: pre-wrap;">{{ resultado }}</pre>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

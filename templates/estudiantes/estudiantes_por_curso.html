@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Estudiantes por Curso{% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Estudiantes por Curso</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Estudiantes por Curso</h3>
+  </div>
+
+  <ul class="nav nav-pills mb-4 gap-2">
+    <li class="nav-item">
+      <a href="{% url 'estudiantes_por_curso' %}" class="nav-link {% if not jornada_activa %}active bg-primary-custom{% else %}text-dark border{% endif %}">
+        <i class="fas fa-sun me-1"></i> Jornada Mañana
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="{% url 'estudiantes_por_curso' %}?jornada=FIN_DE_SEMANA" class="nav-link {% if jornada_activa == 'FIN_DE_SEMANA' %}active bg-success{% else %}text-dark border{% endif %}">
+        <i class="fas fa-calendar-week me-1"></i> Jornada Fin de Semana
+      </a>
+    </li>
+  </ul>
+
+  <div class="row g-4">
+    {% for curso in cursos %}
+    <div class="col-md-4 col-lg-3">
+      <a href="{% url 'estudiantes_por_curso_detalle' curso.id %}" class="text-decoration-none">
+        <div class="card h-100 border-primary shadow-sm">
+          <div class="card-body text-center py-4">
+            <h5 class="card-title text-primary fw-bold">{{ curso.nombre }}</h5>
+            <p class="text-muted mb-1"><small>{{ curso.nivel }}</small></p>
+            <span class="badge bg-primary fs-6">{{ curso.total_estudiantes }} estudiante{{ curso.total_estudiantes|pluralize }}</span>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+      <p class="text-muted">No hay cursos en esta jornada.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

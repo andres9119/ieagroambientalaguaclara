@@ -1,0 +1,434 @@
+{% extends 'base.html' %}
+{% block title %}Mis Cursos – Colegio Web{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4 px-lg-5">
+
+    <!-- ===== HEADER ===== -->
+    <div class="row mb-4 align-items-end">
+        <div class="col-md-8">
+            <p class="text-uppercase fw-semibold mb-1" style="font-size:0.75rem; letter-spacing:1.5px; color:#94a3b8;">
+                <i class="fas fa-chalkboard-teacher me-1"></i>Portal Docente
+            </p>
+            <h1 class="fw-bold mb-1" style="font-size:2rem; color: var(--primary-color);">
+                Mis Grados y Materias
+            </h1>
+            <p class="text-muted mb-0">Selecciona un grado para ver y calificar sus materias asignadas.</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            {% if cursos_agrupados %}
+            <div class="d-flex justify-content-md-end gap-3">
+                <div class="stat-chip">
+                    <span class="stat-num">{{ total_cursos }}</span>
+                    <span class="stat-lbl">Grado{{ total_cursos|pluralize:"s" }}</span>
+                </div>
+                <div class="stat-chip">
+                    <span class="stat-num">{{ total_materias }}</span>
+                    <span class="stat-lbl">Materia{{ total_materias|pluralize:"s" }}</span>
+                </div>
+                <div class="stat-chip">
+                    <span class="stat-num">{{ cursos_agrupados.0.num_estudiantes|default:"—" }}</span>
+                    <span class="stat-lbl">Año {{ cursos_agrupados.0.anio_lectivo|default:"2026" }}</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if cursos_agrupados %}
+    <!-- ===== ACCORDION POR GRADO ===== -->
+    <div class="accordion accordion-flush" id="accordionGrados">
+        {% for grupo in cursos_agrupados %}
+        <div class="accordion-item border-0 mb-3 shadow-sm course-card" style="border-radius:16px; overflow:hidden;">
+
+            <!-- ── Cabecera del grado ── -->
+            <h2 class="accordion-header" id="heading-{{ forloop.counter }}">
+                <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} course-header"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse-{{ forloop.counter }}"
+                    aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                    aria-controls="collapse-{{ forloop.counter }}">
+
+                    <div class="course-icon me-3">
+                        {{ grupo.curso.nombre|slice:":2"|upper }}
+                    </div>
+
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <span class="fw-bold" style="font-size:1.1rem;">{{ grupo.curso.nombre }}</span>
+                            {% if grupo.curso.nivel %}
+                            <span class="badge badge-nivel">{{ grupo.curso.nivel }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex gap-4 mt-1">
+                            <span class="meta-chip">
+                                <i class="fas fa-users me-1"></i>{{ grupo.num_estudiantes }} estudiante{{ grupo.num_estudiantes|pluralize:"s" }}
+                            </span>
+                            <span class="meta-chip">
+                                <i class="fas fa-book me-1"></i>{{ grupo.materias|length }} materia{{ grupo.materias|length|pluralize:"s" }}
+                            </span>
+                            <span class="meta-chip">
+                                <i class="fas fa-calendar-alt me-1"></i>{{ grupo.anio_lectivo }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Progreso global del grado -->
+                    <div class="course-progress ms-3 d-none d-md-flex flex-column align-items-center">
+                        {% with total_prog=0 %}
+                        {% for m in grupo.materias %}
+                        {% endfor %}
+                        {% endwith %}
+                        <span class="progress-label">Progreso</span>
+                        <div class="progress-ring-wrap">
+                            {% with avg_prog=0 %}
+                            {% for m_item in grupo.materias %}
+                            {% endfor %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </button>
+            </h2>
+
+            <!-- ── Cuerpo desplegable con materias ── -->
+            <div id="collapse-{{ forloop.counter }}"
+                class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+                data-bs-parent="#accordionGrados">
+                <div class="accordion-body p-0">
+
+                    <!-- Tabla de materias -->
+                    <table class="table table-hover align-middle mb-0 materias-table">
+                        <thead>
+                            <tr>
+                                <th class="ps-4" style="width:35%;">Materia</th>
+                                <th class="text-center" style="width:10%;">P1</th>
+                                <th class="text-center" style="width:10%;">P2</th>
+                                <th class="text-center" style="width:10%;">P3</th>
+                                <th class="text-center" style="width:10%;">P4</th>
+                                <th class="text-center" style="width:13%;">Progreso</th>
+                                <th class="text-center pe-4" style="width:12%;">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m_item in grupo.materias %}
+                            {% with asig=m_item.asignacion %}
+                            <tr>
+                                <td class="ps-4 py-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="materia-dot"></div>
+                                        <div>
+                                            <span class="fw-semibold d-block">{{ asig.materia.nombre }}</span>
+                                            {% if asig.materia.area %}
+                                            <small class="text-muted">{{ asig.materia.area }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <!-- Mini indicadores por periodo -->
+                                {% for p_num in "1234"|make_list %}
+                                <td class="text-center">
+                                    <span class="period-dot p{{ p_num }}-dot" title="Periodo {{ p_num }}"></span>
+                                </td>
+                                {% endfor %}
+                                <!-- Progreso barra -->
+                                <td class="text-center">
+                                    <div class="progress-wrap">
+                                        <div class="progress" style="height:6px; border-radius:10px;">
+                                            <div class="progress-bar bg-primary"
+                                                style="width: {{ m_item.progreso }}%; border-radius:10px;"></div>
+                                        </div>
+                                        <small class="text-muted mt-1 d-block" style="font-size:0.7rem;">{{ m_item.progreso }}%</small>
+                                    </div>
+                                </td>
+                                <!-- Botón calificar -->
+                                <td class="text-center pe-4">
+                                    <a href="{% url 'calificar_periodos' asig.id %}"
+                                        class="btn btn-sm btn-primary calificar-btn">
+                                        <i class="fas fa-pen me-1"></i>Calificar
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endwith %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <!-- Footer del grado -->
+                    <div class="grade-footer px-4 py-3">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <span class="text-muted" style="font-size:0.82rem;">
+                                <i class="fas fa-calendar-check me-1"></i>
+                                <a href="{% url 'gestionar_asistencia' grupo.materias.0.asignacion.id %}" class="text-muted text-decoration-none">
+                                    Registrar asistencia de {{ grupo.curso.nombre }}
+                                </a>
+                            </span>
+                            <span class="text-muted" style="font-size:0.82rem;">
+                                <i class="fas fa-users me-1"></i>{{ grupo.num_estudiantes }} estudiante{{ grupo.num_estudiantes|pluralize:"s" }} matriculado{{ grupo.num_estudiantes|pluralize:"s" }}
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if cursos_titular %}
+    <!-- ===== TITULAR SECTION ===== -->
+    <div class="card border-0 shadow-sm mb-4" style="border-radius:16px; border-left:4px solid #f59e0b !important;">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div style="width:42px;height:42px;background:#fef3c7;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#d97706;font-size:1.2rem;">
+            <i class="fas fa-gavel"></i>
+          </div>
+          <div>
+            <h5 class="fw-bold mb-0">Titular&iacute;a de Grupo</h5>
+            <p class="text-muted mb-0 small">Eres titular de los siguientes cursos. Aqu&iacute; puedes calificar la disciplina.</p>
+          </div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          {% for c in cursos_titular %}
+          <a href="{% url 'calificar_disciplina' c.id %}" class="btn btn-outline-warning btn-sm">
+            <i class="fas fa-gavel me-1"></i>Disciplina {{ c.nombre }}
+          </a>
+          <a href="{% url 'horarios_curso' c.id %}" class="btn btn-outline-info btn-sm">
+            <i class="fas fa-clock me-1"></i>Horario {{ c.nombre }}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- ===== EMPTY STATE ===== -->
+    <div class="empty-state text-center py-5 mt-4">
+        <div class="empty-icon mb-4">
+            <i class="fas fa-chalkboard fa-4x" style="color:#cbd5e1;"></i>
+        </div>
+        <h3 class="fw-bold text-muted mb-2">Sin cursos asignados</h3>
+        <p class="text-muted mb-4">Actualmente no tienes ningún grado o materia asignada.<br>Contacta al administrador del sistema.</p>
+        <a href="{% url 'dashboard' %}" class="btn btn-primary px-5">
+            <i class="fas fa-home me-2"></i>Ir al Dashboard
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="mt-4 pt-2">
+        <a href="{% url 'dashboard' %}" class="btn btn-link text-decoration-none text-muted px-0">
+            <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
+        </a>
+    </div>
+</div>
+
+<style>
+    /* ─── Stats chips ─── */
+    .stat-chip {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 8px 18px;
+    }
+    .stat-num {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--primary-color, #003366);
+        line-height: 1;
+    }
+    .stat-lbl {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    /* ─── Course card / accordion ─── */
+    .course-card {
+        transition: box-shadow 0.2s;
+    }
+    .course-card:hover {
+        box-shadow: 0 8px 24px rgba(0,0,0,0.09) !important;
+    }
+
+    .course-header {
+        background: white !important;
+        padding: 18px 24px;
+        border-radius: 16px !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .course-header:not(.collapsed) {
+        border-radius: 16px 16px 0 0 !important;
+        background: #f8fafc !important;
+        border-bottom: 2px solid #e2e8f0 !important;
+    }
+    .course-header::after {
+        content: '';
+        display: none;
+    }
+    .accordion-button::after {
+        filter: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%230ea5e9'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") !important;
+        transition: transform 0.25s ease;
+    }
+    .accordion-button:not(.collapsed)::after {
+        transform: rotate(-180deg);
+    }
+
+    .course-icon {
+        width: 52px;
+        height: 52px;
+        background: linear-gradient(135deg, #003366, #0ea5e9);
+        color: white;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        font-weight: 900;
+        flex-shrink: 0;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-nivel {
+        background: #e0e7ff;
+        color: #3730a3;
+        font-size: 0.7rem;
+        font-weight: 700;
+        border-radius: 20px;
+        padding: 3px 10px;
+    }
+
+    .meta-chip {
+        font-size: 0.78rem;
+        color: #64748b;
+    }
+
+    .progress-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #94a3b8;
+    }
+
+    /* ─── Subject table ─── */
+    .materias-table thead th {
+        background: #f8fafc;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #94a3b8;
+        border: none;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 10px 8px;
+    }
+
+    .materias-table tbody tr {
+        transition: background 0.15s;
+    }
+
+    .materias-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .materias-table tbody td {
+        border-bottom: 1px solid #f1f5f9;
+        padding: 12px 8px;
+    }
+
+    .materia-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-top: 3px;
+        background: #4f46e5; /* default */
+    }
+
+    /* Color cycle for subjects */
+    .materias-table tbody tr:nth-child(8n+1) .materia-dot { background: #4f46e5; }
+    .materias-table tbody tr:nth-child(8n+2) .materia-dot { background: #0ea5e9; }
+    .materias-table tbody tr:nth-child(8n+3) .materia-dot { background: #10b981; }
+    .materias-table tbody tr:nth-child(8n+4) .materia-dot { background: #f59e0b; }
+    .materias-table tbody tr:nth-child(8n+5) .materia-dot { background: #ef4444; }
+    .materias-table tbody tr:nth-child(8n+6) .materia-dot { background: #8b5cf6; }
+    .materias-table tbody tr:nth-child(8n+7) .materia-dot { background: #ec4899; }
+    .materias-table tbody tr:nth-child(8n+8) .materia-dot { background: #14b8a6; }
+
+    /* Period indicator dots */
+    .period-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        transition: transform 0.15s;
+    }
+    .p1-dot { background: #4f46e5; }
+    .p2-dot { background: #0ea5e9; }
+    .p3-dot { background: #10b981; }
+    .p4-dot { background: #f59e0b; }
+
+    .progress-wrap {
+        padding: 0 8px;
+    }
+
+    .calificar-btn {
+        border-radius: 20px;
+        font-size: 0.78rem;
+        padding: 5px 14px;
+        font-weight: 600;
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .calificar-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+    }
+
+    /* ─── Grade footer ─── */
+    .grade-footer {
+        background: #fafbff;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    /* ─── Empty state ─── */
+    .empty-state {
+        background: white;
+        border-radius: 20px;
+        padding: 60px 40px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Animate progress bars on accordion open
+    const accordionItems = document.querySelectorAll('.accordion-collapse');
+    accordionItems.forEach(function (item) {
+        item.addEventListener('shown.bs.collapse', function () {
+            const bars = item.querySelectorAll('.progress-bar');
+            bars.forEach(function (bar) {
+                const w = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => { bar.style.transition = 'width 0.6s ease'; bar.style.width = w; }, 50);
+            });
+        });
+    });
+
+    // Trigger animation for the first open accordion
+    const firstBars = document.querySelectorAll('.show .progress-bar');
+    firstBars.forEach(function (bar) {
+        const w = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => { bar.style.transition = 'width 0.7s ease'; bar.style.width = w; }, 200);
+    });
+});
+</script>
+{% endblock %}

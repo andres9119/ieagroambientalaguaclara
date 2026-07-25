@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Mi Horario{% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Mi Horario</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="card border rounded-3">
+    <div class="card-body p-4">
+      <h4 class="mb-0">Mi Horario de Clases</h4>
+      {% if curso %}
+      <p class="text-muted mb-3">{{ curso.nombre }}</p>
+      {% endif %}
+
+      {% if semana %}
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+          <thead class="table-dark text-center">
+            <tr>
+              <th style="width:14%;">Día</th>
+              <th style="width:26%;">Materia</th>
+              <th style="width:18%;">Inicio</th>
+              <th style="width:18%;">Fin</th>
+              <th style="width:24%;">Aula</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for dia, horarios in semana.items %}
+              {% if horarios %}
+                {% for h in horarios %}
+                <tr>
+                  {% if forloop.first %}
+                  <td rowspan="{{ horarios|length }}" class="fw-semibold text-center align-middle">{{ h.get_dia_display }}</td>
+                  {% endif %}
+                  <td>
+                    {% if h.es_descanso %}
+                    <span class="text-warning fst-italic"><i class="fas fa-coffee me-1"></i> Descanso</span>
+                    {% else %}
+                    {{ h.curso_materia.materia.nombre }}
+                    {% endif %}
+                  </td>
+                  <td class="text-center">{{ h.hora_inicio|time:"g:i A" }}</td>
+                  <td class="text-center">{{ h.hora_fin|time:"g:i A" }}</td>
+                  <td class="text-center">{% if not h.es_descanso %}{{ h.aula|default:'-' }}{% else %}—{% endif %}</td>
+                </tr>
+                {% endfor %}
+              {% else %}
+              <tr>
+                <td class="fw-semibold text-center align-middle">Día {{ dia }}</td>
+                <td colspan="4" class="text-muted text-center">Sin clases</td>
+              </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="alert alert-info mb-0">No hay horarios asignados para tu curso.</div>
+      {% endif %}
+      <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary mt-3"><i class="fas fa-arrow-left"></i> Volver</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

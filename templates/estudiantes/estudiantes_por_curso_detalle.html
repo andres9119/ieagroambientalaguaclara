@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Estudiantes de {{ curso.nombre }}{% endblock %}
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'estudiantes_por_curso' %}">Estudiantes por Curso</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ curso.nombre }}</li>
+  </ol>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div>
+      <h3 class="mb-0">{{ curso.nombre }}</h3>
+      <small class="text-muted">{{ curso.nivel }} — {{ estudiantes|length }} estudiante{{ estudiantes|pluralize }}</small>
+    </div>
+    <a href="{% url 'matricular_estudiante' %}" class="btn btn-primary">Matricular Estudiante</a>
+  </div>
+
+  <form class="row g-2 mb-3" method="get">
+    <div class="col-md-6 col-lg-4">
+      <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="Buscar por nombre o documento..." value="{{ search_query }}">
+        <button class="btn btn-primary" type="submit">Buscar</button>
+        {% if search_query %}
+        <a href="." class="btn btn-outline-secondary">Limpiar</a>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+
+  {% if estudiantes %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>N° Documento</th>
+          <th>Nombre Completo</th>
+          <th>Tipo Doc</th>
+          <th>Telefono</th>
+          <th>Acudiente</th>
+          <th>Promedio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in estudiantes %}
+        <tr>
+          <td><strong>{{ e.documento }}</strong></td>
+          <td>{{ e.nombre }}</td>
+          <td>{{ e.tipo_doc }}</td>
+          <td>{{ e.telefono|default:'—' }}</td>
+          <td>{{ e.acudiente }}</td>
+          <td>{{ e.promedio }}</td>
+          <td class="text-nowrap">
+            <a href="{% url 'generar_boletin_pdf' %}?estudiante_id={{ e.id }}" class="btn btn-sm btn-outline-danger" target="_blank"><i class="fas fa-file-pdf"></i> Boletín</a>
+            <a href="{% url 'estudiante_editar' e.id %}?curso={{ curso.id }}" class="btn btn-sm btn-outline-primary">Editar</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <p class="text-muted">{% if search_query %}No se encontraron estudiantes con ese criterio.{% else %}No hay estudiantes matriculados en este curso.{% endif %}</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
