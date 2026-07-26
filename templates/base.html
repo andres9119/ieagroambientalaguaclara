@@ -15,49 +15,45 @@
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
     {% block extra_css %}{% endblock %}
     <style>
-        .navbar-horizontal-links {
-            display: flex !important;
-            flex-direction: row !important;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            gap: 10px;
-        }
-
-        @media (max-width: 991px) {
-            .navbar-horizontal-links {
-                font-size: 0.8rem;
-                gap: 5px;
-                overflow-x: auto;
-                white-space: nowrap;
-                padding-bottom: 5px;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-            }
-            .navbar-horizontal-links::-webkit-scrollbar { display: none; }
-            .navbar-horizontal-links .nav-link {
-                padding: 0.5rem 0.5rem !important;
-                min-height: 36px;
-            }
-        }
-
         @media (max-width: 576px) {
-            .navbar-horizontal-links {
-                font-size: 0.72rem;
-                gap: 3px;
-            }
-            .navbar-horizontal-links .nav-link {
-                padding: 0.4rem 0.4rem !important;
-                font-size: 0.72rem;
-            }
             .navbar-brand {
                 font-size: 0.9rem !important;
-                min-width: auto !important;
             }
             .navbar-brand img {
                 height: 28px !important;
                 width: 28px !important;
                 margin-right: 4px !important;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            #navMenu .navbar-nav .nav-link {
+                padding: 0.6rem 0.8rem !important;
+                border-radius: 8px;
+            }
+            #navMenu .navbar-nav .nav-link:hover {
+                background: #f1f5f9;
+            }
+            #navMenu .d-flex {
+                padding: 0.5rem 0.8rem;
+            }
+        }
+
+        @media (min-width: 992px) {
+            #navMenu .navbar-nav .nav-link {
+                padding: 0.5rem 1rem !important;
+                border-radius: 8px;
+                color: #475569 !important;
+                font-weight: 500;
+                transition: all 0.2s;
+            }
+            #navMenu .navbar-nav .nav-link:hover {
+                background: #f8fafc;
+                color: var(--primary-color) !important;
+            }
+            #navMenu .d-flex {
+                border-top: none !important;
+                padding-top: 0 !important;
             }
         }
 
@@ -138,72 +134,76 @@
                         <span class="d-none d-sm-inline" style="font-size:clamp(0.7rem, 2vw, 1.1rem);">I.E Agroambiental Agua Clara</span>
                     </a>
 
-                    <ul class="navbar-horizontal-links mb-0 ms-2 ms-lg-4">
+                    <button class="navbar-toggler ms-auto border-0 p-1" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-bars fa-lg"></i>
+                    </button>
+                </div>
+
+                <div class="collapse navbar-collapse" id="navMenu">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-lg-1">
                         <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}">Inicio</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'institucion' %}">Institución</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'documentos' %}">Documentos</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'noticias_list' %}">Noticias</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'admisiones' %}">Admisiones</a></li>
-                        <li class="nav-item d-none d-md-inline"><a class="nav-link" href="{% url 'contacto' %}">Contacto</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'contacto' %}">Contacto</a></li>
                     </ul>
-                </div>
 
-                <div class="d-flex align-items-center flex-shrink-0">
-                    {% if user.is_authenticated %}
-                    <div class="dropdown me-2 me-lg-3">
-                        <a class="p-1 p-lg-2 link-secondary position-relative d-block" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-bell" style="font-size:clamp(0.95rem, 2.5vw, 1.2rem);"></i>
-                            {% if unread_notifications_count %}
-                            <span class="notification-badge">{{ unread_notifications_count }}</span>
-                            {% endif %}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 py-0" style="width: 280px;">
-                            <li>
-                                <h6 class="dropdown-header py-3 bg-light rounded-top">Notificaciones</h6>
-                            </li>
-                            <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;">
-                                {% for notif in internal_notifications|slice:":5" %}
-                                <div class="list-group-item py-2 border-0 {% if not notif.leido %}bg-light-info{% endif %}">
-                                    <div class="small">{{ notif.mensaje }}</div>
-                                    <div class="text-muted x-small">{{ notif.fecha_creacion|timesince }}</div>
+                    <div class="d-flex align-items-center flex-shrink-0 mt-2 mt-lg-0 ms-lg-auto ps-lg-3 border-top border-lg-top-0 pt-2 pt-lg-0">
+                        {% if user.is_authenticated %}
+                        <div class="dropdown me-2">
+                            <a class="p-1 p-lg-2 link-secondary position-relative d-block" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-bell" style="font-size:clamp(0.95rem, 2.5vw, 1.2rem);"></i>
+                                {% if unread_notifications_count %}
+                                <span class="notification-badge">{{ unread_notifications_count }}</span>
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 py-0" style="width: 280px;">
+                                <li><h6 class="dropdown-header py-3 bg-light rounded-top">Notificaciones</h6></li>
+                                <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;">
+                                    {% for notif in internal_notifications|slice:":5" %}
+                                    <div class="list-group-item py-2 border-0 {% if not notif.leido %}bg-light-info{% endif %}">
+                                        <div class="small">{{ notif.mensaje }}</div>
+                                        <div class="text-muted x-small">{{ notif.fecha_creacion|timesince }}</div>
+                                    </div>
+                                    {% empty %}
+                                    <div class="p-3 text-center text-muted small">Sin avisos</div>
+                                    {% endfor %}
                                 </div>
-                                {% empty %}
-                                <div class="p-3 text-center text-muted small">Sin avisos</div>
-                                {% endfor %}
-                            </div>
-                        </ul>
-                    </div>
+                            </ul>
+                        </div>
 
-                    <div class="dropdown">
-                        <a class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle gap-1 gap-lg-2" href="#"
-                            role="button" data-bs-toggle="dropdown">
-                            <img src="https://ui-avatars.com/api/?name={{ user.get_full_name|default:user.username|urlencode }}&background=0ea5e9&color=fff&bold=true"
-                                class="rounded-circle border" width="32" height="32" alt="Avatar" style="width:clamp(26px, 5vw, 32px);height:clamp(26px, 5vw, 32px);">
-                            <span class="d-none d-md-inline fw-semibold" style="font-size:0.88rem; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                                {{ user.get_full_name|default:user.username }}
-                            </span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
-                            <li>
-                                <div class="px-3 py-2 border-bottom">
-                                    <div class="fw-bold" style="font-size:0.9rem;">{{ user.get_full_name|default:user.username }}</div>
-                                    <div class="text-muted" style="font-size:0.78rem;">{% if user.is_superuser %}Administrador{% else %}{{ user.get_rol_display }}{% endif %}</div>
-                                </div>
-                            </li>
-                            <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
-                            {% if not user.is_superuser %}<li><a class="dropdown-item" href="{% url 'perfil' %}">Perfil</a></li>{% endif %}
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form action="{% url 'logout' %}" method="post">
-                                    {% csrf_token %}
-                                    <button type="submit" class="dropdown-item text-danger">Salir</button>
-                                </form>
-                            </li>
-                        </ul>
+                        <div class="dropdown">
+                            <a class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle gap-1 gap-lg-2" href="#"
+                                role="button" data-bs-toggle="dropdown">
+                                <img src="https://ui-avatars.com/api/?name={{ user.get_full_name|default:user.username|urlencode }}&background=0ea5e9&color=fff&bold=true"
+                                    class="rounded-circle border" width="32" height="32" alt="Avatar" style="width:clamp(26px, 5vw, 32px);height:clamp(26px, 5vw, 32px);">
+                                <span class="d-none d-md-inline fw-semibold" style="font-size:0.88rem; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                                    {{ user.get_full_name|default:user.username }}
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                                <li>
+                                    <div class="px-3 py-2 border-bottom">
+                                        <div class="fw-bold" style="font-size:0.9rem;">{{ user.get_full_name|default:user.username }}</div>
+                                        <div class="text-muted" style="font-size:0.78rem;">{% if user.is_superuser %}Administrador{% else %}{{ user.get_rol_display }}{% endif %}</div>
+                                    </div>
+                                </li>
+                                <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
+                                {% if not user.is_superuser %}<li><a class="dropdown-item" href="{% url 'perfil' %}">Perfil</a></li>{% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form action="{% url 'logout' %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item text-danger">Salir</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-sm px-3 rounded-pill shadow-sm w-100">Iniciar Sesión</a>
+                        {% endif %}
                     </div>
-                    {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-primary btn-sm px-2 px-lg-3 rounded-pill shadow-sm" style="font-size:clamp(0.75rem, 2vw, 0.9rem);">Login</a>
-                    {% endif %}
                 </div>
             </div>
         </nav>
