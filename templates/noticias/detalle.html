@@ -7,7 +7,7 @@
 <section class="py-3 bg-light">
     <div class="container">
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
+            <ol class="breadcrumb mb-0" style="font-size:clamp(0.78rem, 2vw, 0.9rem);">
                 <li class="breadcrumb-item"><a href="{% url 'inicio' %}">Inicio</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'noticias_list' %}">Noticias</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{ noticia.titulo|truncatewords:5 }}</li>
@@ -16,41 +16,35 @@
     </div>
 </section>
 
-<!-- Noticia Detail -->
-<section class="py-5">
+<section class="py-4 py-lg-5">
     <div class="container">
         <div class="row">
-            <div class="col-lg-10 mx-auto">
-                <!-- Header -->
+            <div class="col-lg-10 mx-auto px-2 px-lg-3">
                 <div class="mb-4">
                     <h1 class="display-5 fw-bold text-primary-custom mb-3">{{ noticia.titulo }}</h1>
-                    <div class="d-flex align-items-center text-muted">
+                    <div class="d-flex align-items-center text-muted" style="font-size:clamp(0.82rem, 2vw, 0.95rem);">
                         <i class="far fa-calendar-alt me-2"></i>
                         <span>{{ noticia.fecha_publicacion|date:"d \d\e F \d\e Y, H:i" }}</span>
                     </div>
                 </div>
 
-                <!-- Imagen Destacada -->
                 {% if noticia.imagen %}
-                <div class="mb-5">
+                <div class="mb-4 mb-lg-5">
                     <img src="{{ noticia.imagen.url }}" class="img-fluid w-100 rounded shadow-lg"
-                        style="max-height: 500px; object-fit: cover;" alt="{{ noticia.titulo }}">
+                        style="max-height: clamp(200px, 50vw, 500px); object-fit: cover;" alt="{{ noticia.titulo }}">
                 </div>
                 {% endif %}
 
-                <!-- Contenido -->
-                <div class="content mb-5">
-                    <div class="fs-5 lh-lg text-dark" style="text-align: justify;">
+                <div class="content mb-4 mb-lg-5">
+                    <div class="text-dark" style="font-size:clamp(0.9rem, 2vw, 1.1rem); line-height: 1.8; text-align: justify;">
                         {{ noticia.contenido|linebreaks }}
                     </div>
                 </div>
 
-                <!-- Divider -->
-                <hr class="my-5">
+                <hr class="my-4 my-lg-5">
 
-                <!-- Botón Volver -->
                 <div class="text-center">
-                    <a href="{% url 'noticias_list' %}" class="btn btn-outline-primary btn-lg">
+                    <a href="{% url 'noticias_list' %}" class="btn btn-outline-primary">
                         <i class="fas fa-arrow-left me-2"></i> Volver a Noticias
                     </a>
                 </div>

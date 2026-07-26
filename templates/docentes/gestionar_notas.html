@@ -1,23 +1,23 @@
 ﻿{% extends 'base.html' %}
 {% block title %}Notas - {{ asignacion.materia.nombre }}{% endblock %}
 {% block content %}
-<div class="container py-4">
-    <div class="row mb-4">
+<div class="container py-3 py-lg-4">
+    <div class="row mb-3 mb-lg-4">
         <div class="col-md-7">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
+                <ol class="breadcrumb" style="font-size:clamp(0.75rem, 1.8vw, 0.9rem);">
                     <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'mis_cursos' %}">Mis Cursos</a></li>
                     <li class="breadcrumb-item active">{{ asignacion.curso.nombre }}</li>
                 </ol>
             </nav>
-            <h1 class="display-5 fw-bold text-primary-custom">Consolidado: {{ asignacion.materia.nombre }}</h1>
-            <p class="lead text-muted">Periodo: <span class="badge bg-primary">P{{ periodo }}</span></p>
+            <h1 class="fw-bold text-primary-custom" style="font-size:clamp(1.2rem, 3.5vw, 2.5rem);">Consolidado: {{ asignacion.materia.nombre }}</h1>
+            <p class="lead text-muted" style="font-size:clamp(0.85rem, 2vw, 1.1rem);">Periodo: <span class="badge bg-primary">P{{ periodo }}</span></p>
         </div>
-        <div class="col-md-5 text-md-end d-flex flex-column align-items-md-end justify-content-center">
-            <div class="mb-2">
+        <div class="col-md-5 text-md-end d-flex flex-column align-items-md-end justify-content-center mt-2 mt-md-0">
+            <div class="mb-2 d-flex flex-wrap gap-1 gap-md-2">
                 <a href="{% url 'exportar_notas_csv' asignacion.id %}?periodo={{ periodo }}"
-                    class="btn btn-outline-success btn-sm shadow-sm me-2">
+                    class="btn btn-outline-success btn-sm shadow-sm">
                     <i class="fas fa-file-csv me-1"></i>Exportar CSV
                 </a>
                 <a href="{% url 'actividades_lista' asignacion.id %}?periodo={{ periodo }}"
@@ -25,7 +25,7 @@
                     <i class="fas fa-list-check me-2"></i>Gestionar Actividades
                 </a>
             </div>
-            <div class="btn-group shadow-sm">
+            <div class="btn-group shadow-sm" style="font-size:clamp(0.7rem, 1.8vw, 0.85rem);">
                 <a href="?periodo=1" class="btn btn-outline-primary {% if periodo == '1' %}active{% endif %}">P1</a>
                 <a href="?periodo=2" class="btn btn-outline-primary {% if periodo == '2' %}active{% endif %}">P2</a>
                 <a href="?periodo=3" class="btn btn-outline-primary {% if periodo == '3' %}active{% endif %}">P3</a>
@@ -39,51 +39,49 @@
                 {% csrf_token %}
                 {{ formset.management_form }}
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table class="table table-hover align-middle mb-0" style="min-width: 700px;">
                         <thead class="bg-light">
                             <tr>
-                                <th class="ps-4" style="width: 15%">Estudiante</th>
-                                <th class="text-center bg-light-info">Saber Acum. (25%)</th>
-                                <th class="text-center">Saber Final (20%)</th>
-                                <th class="text-center bg-light-info">Hacer (45%)</th>
-                                <th class="text-center">Ser: Auto (5%)</th>
-                                <th class="text-center">Ser: Compor. (5%)</th>
-                                <th class="text-center bg-info text-white">Total</th>
-                                <th style="width: 20%">Observaciones</th>
+                                <th class="ps-2 ps-md-4" style="width: 12%; font-size:clamp(0.6rem, 1.5vw, 0.75rem);">Estudiante</th>
+                                <th class="text-center bg-light-info" style="font-size:clamp(0.55rem, 1.3vw, 0.7rem);">Saber Acum.<br><small>(25%)</small></th>
+                                <th class="text-center" style="font-size:clamp(0.55rem, 1.3vw, 0.7rem);">Saber Final<br><small>(20%)</small></th>
+                                <th class="text-center bg-light-info" style="font-size:clamp(0.55rem, 1.3vw, 0.7rem);">Hacer<br><small>(45%)</small></th>
+                                <th class="text-center" style="font-size:clamp(0.55rem, 1.3vw, 0.7rem);">Auto<br><small>(5%)</small></th>
+                                <th class="text-center" style="font-size:clamp(0.55rem, 1.3vw, 0.7rem);">Compor.<br><small>(5%)</small></th>
+                                <th class="text-center bg-info text-white" style="font-size:clamp(0.6rem, 1.5vw, 0.75rem);">Total</th>
+                                <th style="width: 18%; font-size:clamp(0.6rem, 1.5vw, 0.75rem);">Observaciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for form in formset %}
                             <tr>
-                                <td class="ps-4">
+                                <td class="ps-2 ps-md-4">
                                     <div class="d-flex align-items-center">
-                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
-                                            style="width: 35px; height: 35px; font-weight: bold;">
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2 me-md-3 flex-shrink-0"
+                                            style="width: clamp(28px, 5vw, 35px); height: clamp(28px, 5vw, 35px); font-weight: bold; font-size:clamp(0.7rem, 1.5vw, 0.85rem);">
                                             {{ form.instance.estudiante.display_name|slice:":1"|upper }}
                                         </div>
-                                        <div>
-                                            <span class="fw-bold">{{ form.instance.estudiante.display_name }}</span>
+                                        <div class="min-w-0">
+                                            <span class="fw-bold" style="font-size:clamp(0.72rem, 1.8vw, 0.88rem);">{{ form.instance.estudiante.display_name }}</span>
                                         </div>
                                     </div>
                                     {{ form.id }}
                                 </td>
-                                <td class="text-center fw-bold text-muted">
+                                <td class="text-center fw-bold text-muted" style="font-size:clamp(0.7rem, 1.5vw, 0.85rem);">
                                     {{ form.instance.nota_saber_acumulada }}
-                                    <small class="d-block text-xs" style="font-size: 0.65rem;">(Auto)</small>
                                 </td>
-                                <td>{{ form.nota_saber_final }}</td>
-                                <td class="text-center fw-bold text-muted">
+                                <td class="text-center">{{ form.nota_saber_final }}</td>
+                                <td class="text-center fw-bold text-muted" style="font-size:clamp(0.7rem, 1.5vw, 0.85rem);">
                                     {{ form.instance.nota_hacer }}
-                                    <small class="d-block text-xs" style="font-size: 0.65rem;">(Auto)</small>
                                 </td>
-                                <td class="text-center fw-bold text-secondary">
+                                <td class="text-center fw-bold text-secondary" style="font-size:clamp(0.7rem, 1.5vw, 0.85rem);">
                                     {{ form.instance.nota_ser_auto }}
                                 </td>
-                                <td>{{ form.nota_ser_comportamiento }}</td>
-                                <td class="text-center fw-bold bg-light" style="font-size: 1.1rem;">
+                                <td class="text-center">{{ form.nota_ser_comportamiento }}</td>
+                                <td class="text-center fw-bold bg-light" style="font-size:clamp(0.85rem, 2vw, 1.1rem);">
                                     {{ form.instance.nota }}
                                 </td>
-                                <td class="pe-4">{{ form.observaciones }}</td>
+                                <td class="pe-2 pe-md-4">{{ form.observaciones }}</td>
                             </tr>
                             {% empty %}
                             <tr>
@@ -95,16 +93,16 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="card-footer bg-white p-4 text-end border-top-0">
-                    <a href="{% url 'mis_cursos' %}" class="btn btn-outline-secondary px-4 me-2">Cancelar</a>
-                    <button type="submit" class="btn btn-primary btn-lg px-5 shadow-sm">Guardar Calificaciones</button>
+                <div class="card-footer bg-white p-3 p-md-4 text-end border-top-0">
+                    <a href="{% url 'mis_cursos' %}" class="btn btn-outline-secondary px-3 px-md-4 me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary px-4 px-md-5 shadow-sm">Guardar Calificaciones</button>
                 </div>
             </form>
         </div>
     </div>
-    <div class="alert alert-info mt-4">
+    <div class="alert alert-info mt-3 mt-lg-4 py-2 py-lg-3" style="font-size:clamp(0.78rem, 1.8vw, 0.9rem);">
         <p class="mb-1"><i class="fas fa-info-circle me-2"></i><strong>Distribución de la Nota (Periodo):</strong></p>
-        <ul class="mb-0">
+        <ul class="mb-0 ps-3">
             <li><strong>Saber (45%):</strong> Calificaciones acumuladas (25%) + Evaluación final (20%).</li>
             <li><strong>Hacer (45%):</strong> Tareas, trabajos y exposiciones.</li>
             <li><strong>Ser (10%):</strong> Autoevaluación del estudiante (5%) + Comportamiento docente (5%).</li>
@@ -115,10 +113,10 @@
     .table thead th {
         font-weight: 600;
         text-transform: uppercase;
-        font-size: 0.75rem;
         letter-spacing: 0.5px;
         color: #6c757d;
         border-top: none;
+        white-space: nowrap;
     }
 
     input[type="number"] {
@@ -126,19 +124,21 @@
         font-weight: bold;
         border-radius: 6px;
         border: 1px solid #dee2e6;
-        padding: 0.3rem;
-        width: 80px;
+        padding: 0.2rem;
+        width: clamp(50px, 10vw, 80px);
         margin: 0 auto;
         display: block;
+        font-size: clamp(0.72rem, 1.8vw, 0.9rem);
     }
 
     textarea {
         border-radius: 6px;
         border: 1px solid #dee2e6;
-        padding: 0.4rem;
+        padding: 0.3rem;
         width: 100%;
         resize: none;
-        height: 38px;
+        height: clamp(30px, 5vw, 38px);
+        font-size: clamp(0.7rem, 1.5vw, 0.85rem);
     }
 </style>
 {% endblock %}

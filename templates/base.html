@@ -15,7 +15,6 @@
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
     {% block extra_css %}{% endblock %}
     <style>
-        /* Force horizontal links in navbar without collapse */
         .navbar-horizontal-links {
             display: flex !important;
             flex-direction: row !important;
@@ -32,18 +31,39 @@
                 overflow-x: auto;
                 white-space: nowrap;
                 padding-bottom: 5px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
             }
-
+            .navbar-horizontal-links::-webkit-scrollbar { display: none; }
             .navbar-horizontal-links .nav-link {
                 padding: 0.5rem 0.5rem !important;
+                min-height: 36px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-horizontal-links {
+                font-size: 0.72rem;
+                gap: 3px;
+            }
+            .navbar-horizontal-links .nav-link {
+                padding: 0.4rem 0.4rem !important;
+                font-size: 0.72rem;
+            }
+            .navbar-brand {
+                font-size: 0.9rem !important;
+                min-width: auto !important;
+            }
+            .navbar-brand img {
+                height: 28px !important;
+                width: 28px !important;
+                margin-right: 4px !important;
             }
         }
 
         #sidebar {
             z-index: 1100 !important;
-            /* Ensure it is above overlay */
         }
-
         #sidebar-overlay {
             z-index: 1050 !important;
         }
@@ -104,41 +124,35 @@
 
     <div id="content">
         <!-- Top Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top py-2">
-            <div class="container-fluid px-lg-4">
-                <div class="d-flex align-items-center flex-grow-1">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top py-1 py-lg-2">
+            <div class="container-fluid px-2 px-lg-4">
+                <div class="d-flex align-items-center flex-grow-1 min-w-0">
                     {% if user.is_authenticated %}
-                    <button type="button" class="btn btn-link link-dark p-0 me-3 sidebar-toggle-btn">
+                    <button type="button" class="btn btn-link link-dark p-1 p-lg-0 me-2 me-lg-3 sidebar-toggle-btn">
                         <i class="fas fa-bars fa-lg"></i>
                     </button>
                     {% endif %}
-                    <a class="navbar-brand fw-bold text-primary-custom d-flex align-items-center" href="{% url 'inicio' %}"
-                        style="min-width: 140px;">
+                    <a class="navbar-brand fw-bold text-primary-custom d-flex align-items-center flex-shrink-0" href="{% url 'inicio' %}">
                         {% load static %}
                         <img src="{% static 'img/escudo.png' %}" alt="Escudo" style="height:36px;width:36px;object-fit:contain;margin-right:8px;">
-                        <span class="d-none d-sm-inline">I.E Agroambiental Agua Clara</span>
+                        <span class="d-none d-sm-inline" style="font-size:clamp(0.7rem, 2vw, 1.1rem);">I.E Agroambiental Agua Clara</span>
                     </a>
 
-                    <!-- Horizontal Links for everyone -->
-                    <ul class="navbar-horizontal-links mb-0 ms-lg-4">
+                    <ul class="navbar-horizontal-links mb-0 ms-2 ms-lg-4">
                         <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'institucion' %}">Institución</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'documentos' %}">Documentos</a></li>
+                        <li class="nav-item d-none d-sm-inline"><a class="nav-link" href="{% url 'institucion' %}">Institución</a></li>
+                        <li class="nav-item d-none d-sm-inline"><a class="nav-link" href="{% url 'documentos' %}">Documentos</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'noticias_list' %}">Noticias</a></li>
-                        <li class="nav-item d-none d-md-inline"><a class="nav-link"
-                                href="{% url 'admisiones' %}">Admisiones</a></li>
-                        <li class="nav-item d-none d-lg-inline"><a class="nav-link"
-                                href="{% url 'contacto' %}">Contacto</a></li>
+                        <li class="nav-item d-none d-md-inline"><a class="nav-link" href="{% url 'admisiones' %}">Admisiones</a></li>
+                        <li class="nav-item d-none d-lg-inline"><a class="nav-link" href="{% url 'contacto' %}">Contacto</a></li>
                     </ul>
                 </div>
 
-                <!-- Right Side -->
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center flex-shrink-0">
                     {% if user.is_authenticated %}
-                    <div class="dropdown me-3">
-                        <a class="p-2 link-secondary position-relative" href="#" role="button"
-                            data-bs-toggle="dropdown">
-                            <i class="fas fa-bell"></i>
+                    <div class="dropdown me-2 me-lg-3">
+                        <a class="p-1 p-lg-2 link-secondary position-relative d-block" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell" style="font-size:clamp(0.95rem, 2.5vw, 1.2rem);"></i>
                             {% if unread_notifications_count %}
                             <span class="notification-badge">{{ unread_notifications_count }}</span>
                             {% endif %}
@@ -149,8 +163,7 @@
                             </li>
                             <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;">
                                 {% for notif in internal_notifications|slice:":5" %}
-                                <div
-                                    class="list-group-item py-2 border-0 {% if not notif.leido %}bg-light-info{% endif %}">
+                                <div class="list-group-item py-2 border-0 {% if not notif.leido %}bg-light-info{% endif %}">
                                     <div class="small">{{ notif.mensaje }}</div>
                                     <div class="text-muted x-small">{{ notif.fecha_creacion|timesince }}</div>
                                 </div>
@@ -162,10 +175,10 @@
                     </div>
 
                     <div class="dropdown">
-                        <a class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle gap-2" href="#"
+                        <a class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle gap-1 gap-lg-2" href="#"
                             role="button" data-bs-toggle="dropdown">
                             <img src="https://ui-avatars.com/api/?name={{ user.get_full_name|default:user.username|urlencode }}&background=0ea5e9&color=fff&bold=true"
-                                class="rounded-circle border" width="32" height="32" alt="Avatar">
+                                class="rounded-circle border" width="32" height="32" alt="Avatar" style="width:clamp(26px, 5vw, 32px);height:clamp(26px, 5vw, 32px);">
                             <span class="d-none d-md-inline fw-semibold" style="font-size:0.88rem; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                                 {{ user.get_full_name|default:user.username }}
                             </span>
@@ -179,9 +192,7 @@
                             </li>
                             <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
                             {% if not user.is_superuser %}<li><a class="dropdown-item" href="{% url 'perfil' %}">Perfil</a></li>{% endif %}
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="{% url 'logout' %}" method="post">
                                     {% csrf_token %}
@@ -191,7 +202,7 @@
                         </ul>
                     </div>
                     {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-primary btn-sm px-3 rounded-pill shadow-sm">Login</a>
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-sm px-2 px-lg-3 rounded-pill shadow-sm" style="font-size:clamp(0.75rem, 2vw, 0.9rem);">Login</a>
                     {% endif %}
                 </div>
             </div>
@@ -217,18 +228,18 @@
         </main>
 
         <footer class="footer-custom mt-auto">
-            <div class="container py-5">
-                <div class="row g-4 justify-content-between">
-                    <div class="col-lg-4 col-md-6 mb-4">
+            <div class="container py-4 py-lg-5">
+                <div class="row g-3 g-lg-4 justify-content-between">
+                    <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
                         <h5 class="fw-bold mb-3"><i class="fas fa-graduation-cap me-2 text-secondary-custom"></i>I.E Agroambiental Agua Clara</h5>
                         <p class="small opacity-75">Educación propia, territorio, cultura y futuro. Construyendo procesos formativos desde la comunidad, la vida y la relación con la Madre Tierra.</p>
-                        <div class="d-flex gap-2 mt-4">
+                        <div class="d-flex gap-2 mt-3 mt-lg-4">
                             <a href="https://www.facebook.com/people/IE-Agroambiental-Agua-Clara/61574432785403/" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
                             <a href="https://wa.me/573117944573" target="_blank" class="social-icon"><i class="fab fa-whatsapp"></i></a>
                         </div>
                     </div>
-                    <div class="col-lg-2 col-md-6 mb-4">
-                        <h5 class="fw-bold mb-3">Institución</h5>
+                    <div class="col-6 col-lg-2 mb-3 mb-lg-0">
+                        <h5 class="fw-bold mb-3" style="font-size:clamp(0.8rem, 2vw, 1rem);">Institución</h5>
                         <ul class="list-unstyled footer-links">
                             <li><a href="{% url 'inicio' %}" class="small">Inicio</a></li>
                             <li><a href="{% url 'institucion' %}" class="small">Sobre Nosotros</a></li>
@@ -236,8 +247,8 @@
                             <li><a href="{% url 'contacto' %}" class="small">Contacto</a></li>
                         </ul>
                     </div>
-                    <div class="col-lg-2 col-md-6 mb-4">
-                        <h5 class="fw-bold mb-3">Servicios</h5>
+                    <div class="col-6 col-lg-2 mb-3 mb-lg-0">
+                        <h5 class="fw-bold mb-3" style="font-size:clamp(0.8rem, 2vw, 1rem);">Servicios</h5>
                         <ul class="list-unstyled footer-links">
                             <li><a href="{% url 'admisiones' %}" class="small">Admisiones</a></li>
                             <li><a href="{% url 'login' %}" class="small">Plataforma</a></li>
@@ -245,29 +256,29 @@
                             <li><a href="#" class="small">Galería</a></li>
                         </ul>
                     </div>
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <h5 class="fw-bold mb-3">Contacto</h5>
+                    <div class="col-12 col-lg-3 mb-3 mb-lg-0">
+                        <h5 class="fw-bold mb-3" style="font-size:clamp(0.8rem, 2vw, 1rem);">Contacto</h5>
                         <ul class="list-unstyled footer-links">
-                            <li class="small mb-3 text-muted d-flex align-items-start">
-                                <i class="fas fa-map-marker-alt me-2 mt-1 text-secondary-custom"></i>
+                            <li class="small mb-2 mb-lg-3 text-muted d-flex align-items-start">
+                                <i class="fas fa-map-marker-alt me-2 mt-1 text-secondary-custom flex-shrink-0"></i>
                                 <span>Vereda Agua Clara, Municipio de Suárez Cauca</span>
                             </li>
-                            <li class="small mb-3 text-muted d-flex align-items-center">
-                                <i class="fas fa-phone me-2 text-secondary-custom"></i>
+                            <li class="small mb-2 mb-lg-3 text-muted d-flex align-items-center">
+                                <i class="fas fa-phone me-2 text-secondary-custom flex-shrink-0"></i>
                                 <span>3117944573 - 3183395072</span>
                             </li>
-                            <li class="small mb-3 text-muted d-flex align-items-center">
-                                <i class="fab fa-whatsapp me-2 text-secondary-custom"></i>
+                            <li class="small mb-2 mb-lg-3 text-muted d-flex align-items-center">
+                                <i class="fab fa-whatsapp me-2 text-secondary-custom flex-shrink-0"></i>
                                 <span>3117944573 - 3183395072</span>
                             </li>
-                            <li class="small mb-3 text-muted d-flex align-items-center">
-                                <i class="fas fa-envelope me-2 text-secondary-custom"></i>
+                            <li class="small mb-2 mb-lg-3 text-muted d-flex align-items-center">
+                                <i class="fas fa-envelope me-2 text-secondary-custom flex-shrink-0"></i>
                                 <span>agroambientalaguaclara@gmail.com</span>
                             </li>
                         </ul>
                     </div>
                 </div>
-                <div class="footer-bottom text-center small opacity-50 mt-5 pt-4 border-top">
+                <div class="footer-bottom text-center small opacity-50 mt-4 mt-lg-5 pt-3 pt-lg-4 border-top">
                     &copy; {% now "Y" %} I.E Agroambiental Agua Clara. Todos los derechos reservados. | <a
                         href="{% url 'politica_privacidad' %}" class="d-inline text-muted ms-2">Política de
                         Privacidad</a>
@@ -275,6 +286,46 @@
             </div>
         </footer>
     </div>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/573117944573" target="_blank" rel="noopener noreferrer"
+        class="whatsapp-float" aria-label="Chatear por WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <style>
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+            z-index: 999;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+            color: white;
+        }
+        @media (max-width: 576px) {
+            .whatsapp-float {
+                bottom: 16px;
+                right: 16px;
+                width: 48px;
+                height: 48px;
+                font-size: 24px;
+            }
+        }
+    </style>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

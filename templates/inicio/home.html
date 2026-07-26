@@ -11,14 +11,23 @@
     }
 
     .carousel-item img {
-        height: 500px;
+        height: clamp(200px, 50vw, 500px);
         object-fit: cover;
     }
 
     .carousel-caption {
         background-color: rgba(0, 0, 0, 0.5);
         border-radius: 10px;
-        padding: 20px;
+        padding: clamp(10px, 2vw, 20px);
+    }
+
+    .carousel-caption h5 { font-size: clamp(0.85rem, 2.5vw, 1.25rem); }
+    .carousel-caption p { font-size: clamp(0.72rem, 1.8vw, 1rem); }
+
+    @media (max-width: 576px) {
+        .carousel-caption { padding: 8px; max-width: 95%; margin: 0 auto; }
+        .carousel-caption h5 { font-size: 0.82rem; }
+        .carousel-caption p { font-size: 0.7rem; margin-bottom: 0; }
     }
 </style>
 {% endblock %}
@@ -29,9 +38,9 @@
     <div class="container hero-content">
         <h1 class="display-3 fw-bold mb-4">Institución Educativa Agroambiental Agua Clara</h1>
         <p class="lead mb-5 px-md-3">La Institución con más café en toda Colombia. Sustituimos el conflicto por caficultura ancestral en el Resguardo Cerro Tijeras (Suárez, Cauca). Con 65,000 árboles de café y un modelo educativo propio (SEIP), transformamos el territorio en una empresa comunitaria que siembra sueños, identidad y autonomía económica.</p>
-        <div class="d-flex justify-content-center gap-3">
-            <a href="{% url 'institucion' %}" class="btn btn-secondary btn-lg hero-btn shadow">Conoce Más</a>
-            <a href="{% url 'admisiones' %}" class="btn btn-outline-light btn-lg hero-btn shadow">Admisiones</a>
+        <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 gap-sm-3">
+            <a href="{% url 'institucion' %}" class="btn btn-secondary hero-btn shadow">Conoce Más</a>
+            <a href="{% url 'admisiones' %}" class="btn btn-outline-light hero-btn shadow">Admisiones</a>
         </div>
     </div>
 </section>
@@ -39,9 +48,9 @@
 <!-- Carousel Section -->
 <section class="py-5">
     <div class="container">
-        <div class="row mb-5 text-center">
+        <div class="row mb-4 mb-lg-5 text-center">
             <div class="col-12">
-                <h2 class="display-6 fw-bold text-primary-custom">Nuestra Vida Escolar</h2>
+                <h2 class="fw-bold text-primary-custom" style="font-size:clamp(1.2rem, 4vw, 2.5rem);">Nuestra Vida Escolar</h2>
                 <div class="divider mx-auto bg-secondary-custom" style="width: 80px; height: 4px; border-radius: 2px;">
                 </div>
             </div>
@@ -121,9 +130,9 @@
 <!-- Features Section -->
 <section class="py-5 bg-light">
     <div class="container">
-        <div class="row text-center mb-5">
+        <div class="row text-center mb-4 mb-lg-5">
             <div class="col-12">
-                <h2 class="display-6 fw-bold text-primary-custom">¿Por Qué Elegirnos?</h2>
+                <h2 class="fw-bold text-primary-custom" style="font-size:clamp(1.2rem, 4vw, 2.5rem);">¿Por Qué Elegirnos?</h2>
                 <div class="divider mx-auto bg-secondary-custom" style="width: 80px; height: 4px; border-radius: 2px;">
                 </div>
             </div>
@@ -166,12 +175,12 @@
 <!-- News Preview Section -->
 <section class="py-5">
     <div class="container">
-        <div class="row align-items-center mb-5">
-            <div class="col-md-8">
-                <h2 class="display-6 fw-bold text-primary-custom">Últimas Noticias</h2>
+        <div class="row align-items-center mb-4 mb-lg-5">
+            <div class="col-8">
+                <h2 class="fw-bold text-primary-custom" style="font-size:clamp(1.1rem, 3.5vw, 2.2rem);">Últimas Noticias</h2>
             </div>
-            <div class="col-md-4 text-md-end">
-                <a href="{% url 'noticias_list' %}" class="btn btn-outline-primary rounded-pill">Ver Todas <i
+            <div class="col-4 text-end">
+                <a href="{% url 'noticias_list' %}" class="btn btn-outline-primary btn-sm rounded-pill">Ver Todas <i
                         class="fas fa-arrow-right ms-2"></i></a>
             </div>
         </div>
@@ -210,11 +219,11 @@
 </section>
 
 <!-- Call to Action -->
-<section class="py-5 bg-primary-custom text-white text-center">
+<section class="py-4 py-lg-5 bg-primary-custom text-white text-center">
     <div class="container">
-        <h2 class="mb-4">¿Listo para formar parte de nuestra familia?</h2>
-        <p class="lead mb-4">El proceso de admisión está abierto. Contáctanos hoy mismo.</p>
-        <a href="{% url 'contacto' %}" class="btn btn-secondary btn-lg shadow">Contáctanos</a>
+        <h2 class="mb-3 mb-lg-4" style="font-size:clamp(1.15rem, 3.5vw, 2rem);">¿Listo para formar parte de nuestra familia?</h2>
+        <p class="lead mb-3 mb-lg-4" style="font-size:clamp(0.9rem, 2.5vw, 1.15rem);">El proceso de admisión está abierto. Contáctanos hoy mismo.</p>
+        <a href="{% url 'contacto' %}" class="btn btn-secondary shadow" style="font-size:clamp(0.9rem, 2.5vw, 1.1rem);">Contáctanos</a>
     </div>
 </section>
 {% endblock %}

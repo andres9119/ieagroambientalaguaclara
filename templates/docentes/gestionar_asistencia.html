@@ -1,30 +1,30 @@
 ﻿{% extends 'base.html' %}
 {% block title %}Asistencia - {{ asignacion.curso.nombre }}{% endblock %}
 {% block content %}
-<div class="container py-4">
-    <div class="row mb-4 align-items-center">
+<div class="container py-3 py-lg-4">
+    <div class="row mb-3 mb-lg-4 align-items-center">
         <div class="col-md-7">
-            <nav aria-label="breadcrumb"><ol class="breadcrumb">
+            <nav aria-label="breadcrumb"><ol class="breadcrumb" style="font-size:clamp(0.72rem, 1.8vw, 0.9rem);">
                 <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'mis_cursos' %}">Mis Cursos</a></li>
                 <li class="breadcrumb-item active">Asistencia</li>
             </ol></nav>
-            <h1 class="display-5 fw-bold text-primary-custom">Control de Asistencia</h1>
-            <p class="lead text-muted"><i class="fas fa-users me-2"></i>{{ asignacion.curso.nombre }} | <i class="fas fa-book ms-3 me-2"></i>{{ asignacion.materia.nombre }}</p>
+            <h1 class="fw-bold text-primary-custom" style="font-size:clamp(1.2rem, 3.5vw, 2.5rem);">Control de Asistencia</h1>
+            <p class="lead text-muted" style="font-size:clamp(0.82rem, 2vw, 1rem);"><i class="fas fa-users me-2"></i>{{ asignacion.curso.nombre }} | <i class="fas fa-book ms-3 me-2"></i>{{ asignacion.materia.nombre }}</p>
         </div>
         <div class="col-md-5">
-            <div class="d-flex justify-content-md-end gap-2 mb-3 mb-md-0">
+            <div class="d-flex justify-content-md-end gap-1 gap-md-2 mb-2 mb-md-0 flex-wrap">
                 {% for dia in semana %}
-                <a href="?fecha={{ dia.fecha }}" class="btn {% if dia.activa %}btn-primary shadow{% else %}btn-outline-secondary{% endif %} text-center py-1 px-3" style="min-width: 60px;">
-                    <small class="d-block text-uppercase" style="font-size: 0.65rem;">{{ dia.nombre }}</small>
-                    <span class="fw-bold">{{ dia.numero }}</span>
+                <a href="?fecha={{ dia.fecha }}" class="btn {% if dia.activa %}btn-primary shadow{% else %}btn-outline-secondary{% endif %} text-center py-1 px-2 px-md-3" style="min-width: 48px;">
+                    <small class="d-block text-uppercase" style="font-size: 0.55rem;">{{ dia.nombre }}</small>
+                    <span class="fw-bold" style="font-size:clamp(0.72rem, 1.8vw, 0.9rem);">{{ dia.numero }}</span>
                 </a>
                 {% endfor %}
             </div>
             <form method="get" class="d-flex align-items-center justify-content-md-end mt-2">
                 <div class="input-group input-group-sm shadow-sm" style="max-width: 200px;">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-calendar-alt text-primary-custom"></i></span>
-                    <input type="date" name="fecha" class="form-control border-start-0" value="{{ fecha }}">
+                    <input type="date" name="fecha" class="form-control border-start-0" value="{{ fecha }}" style="font-size:clamp(0.75rem, 1.8vw, 0.9rem);">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
                 </div>
             </form>
@@ -36,23 +36,23 @@
                 {% csrf_token %}
                 {{ formset.management_form }}
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table class="table table-hover align-middle mb-0" style="min-width: 400px;">
                         <thead class="bg-light"><tr>
-                            <th class="ps-4" style="width: 40%">Estudiante</th>
-                            <th class="text-center" style="width: 20%">Estado</th>
-                            <th class="pe-4" style="width: 40%">Observación</th>
+                            <th class="ps-3 ps-md-4" style="width: 40%; font-size:clamp(0.65rem, 1.5vw, 0.8rem);">Estudiante</th>
+                            <th class="text-center" style="width: 20%; font-size:clamp(0.65rem, 1.5vw, 0.8rem);">Estado</th>
+                            <th class="pe-3 pe-md-4" style="width: 40%; font-size:clamp(0.65rem, 1.5vw, 0.8rem);">Observación</th>
                         </tr></thead>
                         <tbody>
                             {% for form in formset %}
                             <tr>
-                                <td class="ps-4">
+                                <td class="ps-3 ps-md-4">
                                     <div class="d-flex align-items-center">
-                                        <div class="bg-secondary text-dark rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-weight: bold; background-color: #e9ecef !important;">
+                                        <div class="bg-secondary text-dark rounded-circle d-flex align-items-center justify-content-center me-2 me-md-3 flex-shrink-0" style="width: clamp(30px, 5vw, 40px); height: clamp(30px, 5vw, 40px); font-weight: bold; font-size:clamp(0.72rem, 1.5vw, 0.85rem); background-color: #e9ecef !important;">
                                             {{ form.instance.estudiante.display_name|slice:":1"|upper }}
                                         </div>
-                                        <div>
-                                            <span class="fw-bold d-block">{{ form.instance.estudiante.display_name }}</span>
-                                            <small class="text-muted">ID: {{ form.instance.estudiante.id|stringformat:"04d" }}</small>
+                                        <div class="min-w-0">
+                                            <span class="fw-bold d-block" style="font-size:clamp(0.78rem, 2vw, 0.9rem);">{{ form.instance.estudiante.display_name }}</span>
+                                            <small class="text-muted" style="font-size:clamp(0.62rem, 1.5vw, 0.78rem);">ID: {{ form.instance.estudiante.id|stringformat:"04d" }}</small>
                                         </div>
                                     </div>
                                     {{ form.id }}
@@ -60,10 +60,10 @@
                                 <td class="text-center">
                                     <div class="form-check form-switch d-inline-block">
                                         {{ form.asistio }}
-                                        <label class="form-check-label small text-muted ms-2" for="{{ form.asistio.id_for_label }}">Presente</label>
+                                        <label class="form-check-label small text-muted ms-1 ms-md-2" for="{{ form.asistio.id_for_label }}" style="font-size:clamp(0.65rem, 1.5vw, 0.78rem);">Presente</label>
                                     </div>
                                 </td>
-                                <td class="pe-4">{{ form.observacion }}</td>
+                                <td class="pe-3 pe-md-4">{{ form.observacion }}</td>
                             </tr>
                             {% empty %}
                             <tr><td colspan="3" class="text-center py-5"><p class="h5 text-muted">No hay estudiantes</p></td></tr>
@@ -71,19 +71,19 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="card-footer bg-white p-4 text-end border-top-0">
-                    <a href="{% url 'mis_cursos' %}" class="btn btn-outline-secondary px-4 me-2">Cancelar</a>
-                    <button type="submit" class="btn btn-success btn-lg px-5 shadow-sm"><i class="fas fa-check-circle me-2"></i>Guardar Asistencia</button>
+                <div class="card-footer bg-white p-3 p-md-4 text-end border-top-0">
+                    <a href="{% url 'mis_cursos' %}" class="btn btn-outline-secondary px-3 px-md-4 me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-success shadow-sm" style="font-size:clamp(0.82rem, 2vw, 1rem);"><i class="fas fa-check-circle me-2"></i>Guardar Asistencia</button>
                 </div>
             </form>
         </div>
     </div>
-    <div class="alert alert-light border mt-3 small text-muted">
+    <div class="alert alert-light border mt-3 small text-muted" style="font-size:clamp(0.72rem, 1.5vw, 0.85rem);">
         <i class="fas fa-lightbulb me-2"></i><strong>Tip:</strong> Por defecto todos están marcados como "Presente". Solo cambia el interruptor para los estudiantes ausentes.
     </div>
 </div>
 <style>
-    .table thead th { font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; color: #6c757d; border-top: none; }
+    .table thead th { font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #6c757d; border-top: none; white-space: nowrap; }
     .form-check-input:checked { background-color: #198754; border-color: #198754; }
     .btn-outline-secondary { border-color: #dee2e6; color: #6c757d; }
     .btn-outline-secondary:hover { background-color: #f8f9fa; color: #212529; border-color: #ced4da; }

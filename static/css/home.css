@@ -8,12 +8,37 @@
     border-bottom: 5px solid var(--secondary-color);
 }
 
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 60px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section {
+        padding: 40px 0 50px;
+    }
+}
+
 .hero-content h1 {
     font-size: 3.5rem;
     font-weight: 800;
     color: white;
     margin-bottom: 1rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-content h1 {
+        font-size: 1.6rem;
+        margin-bottom: 0.75rem;
+    }
 }
 
 .hero-content p {
@@ -25,6 +50,21 @@
     color: #f0f0f0;
 }
 
+@media (max-width: 768px) {
+    .hero-content p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-content p {
+        font-size: 0.88rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.5;
+    }
+}
+
 .hero-btn {
     padding: 12px 30px;
     font-size: 1.1rem;
@@ -33,11 +73,26 @@
     letter-spacing: 1px;
 }
 
+@media (max-width: 576px) {
+    .hero-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+}
+
 /* Features Section */
 .feature-icon {
     font-size: 3rem;
     color: var(--primary-color);
     margin-bottom: 1rem;
+}
+
+@media (max-width: 576px) {
+    .feature-icon {
+        font-size: 2.2rem;
+        margin-bottom: 0.75rem;
+    }
 }
 
 .feature-card {
@@ -49,8 +104,46 @@
     transition: all 0.3s ease;
 }
 
-.feature-card:hover {
-    transform: translateY(-10px);
+@media (max-width: 576px) {
+    .feature-card {
+        padding: 1.25rem;
+    }
+    .feature-card h4 {
+        font-size: 1.05rem;
+    }
+    .feature-card p {
+        font-size: 0.88rem;
+    }
+}
+
+@media (hover: hover) {
+    .feature-card:hover {
+        transform: translateY(-10px);
+    }
+}
+
+/* Carousel */
+@media (max-width: 576px) {
+    .carousel-item img {
+        height: 240px !important;
+        object-fit: cover;
+    }
+    .carousel-caption {
+        padding: 12px !important;
+    }
+    .carousel-caption h5 {
+        font-size: 0.95rem;
+    }
+    .carousel-caption p {
+        font-size: 0.8rem;
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-item img {
+        height: 350px !important;
+    }
 }
 
 /* News Preview */
@@ -64,4 +157,14 @@
     font-size: 0.85rem;
     color: #666;
     font-style: italic;
+}
+
+/* CTA Section */
+@media (max-width: 576px) {
+    section.py-5.bg-primary-custom.text-white.text-center h2 {
+        font-size: 1.3rem;
+    }
+    section.py-5.bg-primary-custom.text-white.text-center p.lead {
+        font-size: 0.95rem;
+    }
 }

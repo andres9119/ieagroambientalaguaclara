@@ -4,21 +4,19 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="py-5 bg-primary-custom text-white">
+<section class="py-4 py-lg-5 bg-primary-custom text-white">
     <div class="container text-center">
         <h1 class="display-4 fw-bold mb-3 text-white">Contáctanos</h1>
         <p class="lead mb-0">Estamos aquí para responder tus preguntas y ayudarte</p>
     </div>
 </section>
 
-<!-- Main Content -->
-<section class="py-5">
+<section class="py-4 py-lg-5">
     <div class="container">
-        <div class="row g-5">
-            <!-- Formulario de Contacto -->
+        <div class="row g-3 g-lg-5">
             <div class="col-lg-7">
                 <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body p-4 p-lg-5">
+                    <div class="card-body p-3 p-lg-5">
                         <h2 class="h3 fw-bold text-primary-custom mb-4">Envíanos un Mensaje</h2>
 
                         {% if messages %}
@@ -64,71 +62,68 @@
                 </div>
             </div>
 
-            <!-- Información de Contacto -->
             <div class="col-lg-5">
                 <div class="h-100 d-flex flex-column">
-                    <!-- Datos de Contacto -->
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-body p-4">
-                            <h3 class="h4 fw-bold text-primary-custom mb-4">Información de Contacto</h3>
+                    <div class="card border-0 shadow-sm mb-3 mb-lg-4">
+                        <div class="card-body p-3 p-lg-4">
+                            <h3 class="h4 fw-bold text-primary-custom mb-3 mb-lg-4">Información de Contacto</h3>
 
-                            <div class="mb-4">
+                            <div>
                                 <div class="d-flex align-items-start mb-3">
                                     <div class="flex-shrink-0">
                                         <div class="bg-primary-custom text-white rounded-circle d-flex align-items-center justify-content-center"
-                                            style="width: 45px; height: 45px;">
-                                            <i class="fas fa-map-marker-alt"></i>
+                                            style="width: clamp(36px, 6vw, 45px); height: clamp(36px, 6vw, 45px);">
+                                            <i class="fas fa-map-marker-alt" style="font-size:clamp(0.8rem, 2vw, 1rem);"></i>
                                         </div>
                                     </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h5 class="mb-1 fw-semibold">Dirección</h5>
-                                        <p class="text-muted mb-0">Vereda Agua Clara<br>Municipio de Suárez, Cauca</p>
+                                    <div class="flex-grow-1 ms-2 ms-lg-3">
+                                        <h5 class="mb-1 fw-semibold" style="font-size:clamp(0.85rem, 2vw, 1rem);">Dirección</h5>
+                                        <p class="text-muted mb-0" style="font-size:clamp(0.8rem, 1.8vw, 0.95rem);">Vereda Agua Clara<br>Municipio de Suárez, Cauca</p>
                                     </div>
                                 </div>
 
                                 <div class="d-flex align-items-start mb-3">
                                     <div class="flex-shrink-0">
                                         <div class="bg-secondary-custom text-dark rounded-circle d-flex align-items-center justify-content-center"
-                                            style="width: 45px; height: 45px;">
-                                            <i class="fas fa-phone"></i>
+                                            style="width: clamp(36px, 6vw, 45px); height: clamp(36px, 6vw, 45px);">
+                                            <i class="fas fa-phone" style="font-size:clamp(0.8rem, 2vw, 1rem);"></i>
                                         </div>
                                     </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h5 class="mb-1 fw-semibold">Teléfono / WhatsApp</h5>
-                                        <p class="text-muted mb-0">3117944573<br>3183395072</p>
+                                    <div class="flex-grow-1 ms-2 ms-lg-3">
+                                        <h5 class="mb-1 fw-semibold" style="font-size:clamp(0.85rem, 2vw, 1rem);">Teléfono / WhatsApp</h5>
+                                        <p class="text-muted mb-0" style="font-size:clamp(0.8rem, 1.8vw, 0.95rem);">3117944573<br>3183395072</p>
                                     </div>
                                 </div>
 
                                 <div class="d-flex align-items-start mb-3">
                                     <div class="flex-shrink-0">
                                         <div class="bg-primary-custom text-white rounded-circle d-flex align-items-center justify-content-center"
-                                            style="width: 45px; height: 45px;">
-                                            <i class="fas fa-envelope"></i>
+                                            style="width: clamp(36px, 6vw, 45px); height: clamp(36px, 6vw, 45px);">
+                                            <i class="fas fa-envelope" style="font-size:clamp(0.8rem, 2vw, 1rem);"></i>
                                         </div>
                                     </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h5 class="mb-1 fw-semibold">Email</h5>
-                                        <p class="text-muted mb-0">agroambientalaguaclara@gmail.com</p>
+                                    <div class="flex-grow-1 ms-2 ms-lg-3">
+                                        <h5 class="mb-1 fw-semibold" style="font-size:clamp(0.85rem, 2vw, 1rem);">Email</h5>
+                                        <p class="text-muted mb-0" style="font-size:clamp(0.8rem, 1.8vw, 0.95rem);">agroambientalaguaclara@gmail.com</p>
                                     </div>
                                 </div>
 
                                 <div class="d-flex align-items-start">
                                     <div class="flex-shrink-0">
                                         <div class="bg-secondary-custom text-dark rounded-circle d-flex align-items-center justify-content-center"
-                                            style="width: 45px; height: 45px;">
-                                            <i class="fas fa-clock"></i>
+                                            style="width: clamp(36px, 6vw, 45px); height: clamp(36px, 6vw, 45px);">
+                                            <i class="fas fa-clock" style="font-size:clamp(0.8rem, 2vw, 1rem);"></i>
                                         </div>
                                     </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h5 class="mb-1 fw-semibold">Horario de Atención</h5>
-                                        <p class="text-muted mb-0">Lunes - Viernes<br>7:00 AM - 4:00 PM</p>
+                                    <div class="flex-grow-1 ms-2 ms-lg-3">
+                                        <h5 class="mb-1 fw-semibold" style="font-size:clamp(0.85rem, 2vw, 1rem);">Horario de Atención</h5>
+                                        <p class="text-muted mb-0" style="font-size:clamp(0.8rem, 1.8vw, 0.95rem);">Lunes - Viernes<br>7:00 AM - 4:00 PM</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Mapa -->
                     <div class="card border-0 shadow-sm flex-grow-1">
                         <div class="card-body p-0">
                             <div class="ratio ratio-4x3">

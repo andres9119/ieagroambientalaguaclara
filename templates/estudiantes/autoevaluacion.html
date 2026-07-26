@@ -3,21 +3,21 @@
 {% block title %}Autoevaluación - {{ calificacion.materia.nombre }}{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+<div class="container py-4 py-lg-5">
+    <div class="row justify-content-center mx-2 mx-lg-0">
+        <div class="col-12 col-md-6">
             <div class="card shadow border-0">
-                <div class="card-header bg-primary text-white py-3">
-                    <h3 class="mb-0 h4"><i class="fas fa-user-edit me-2"></i>Autoevaluación</h3>
+                <div class="card-header bg-primary text-white py-2 py-md-3">
+                    <h3 class="mb-0 h4" style="font-size:clamp(1rem, 3vw, 1.3rem);"><i class="fas fa-user-edit me-2"></i>Autoevaluación</h3>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     <div class="mb-4">
-                        <h5 class="text-primary">{{ calificacion.materia.nombre }}</h5>
-                        <p class="text-muted">Periodo {{ calificacion.periodo }}</p>
+                        <h5 class="text-primary" style="font-size:clamp(0.9rem, 2.5vw, 1.1rem);">{{ calificacion.materia.nombre }}</h5>
+                        <p class="text-muted" style="font-size:clamp(0.82rem, 2vw, 0.95rem);">Periodo {{ calificacion.periodo }}</p>
                         <hr>
-                        <p>De acuerdo a tu desempeño en este periodo, asigna una calificación de 0.0 a 5.0 que
+                        <p style="font-size:clamp(0.82rem, 2vw, 0.95rem);">De acuerdo a tu desempeño en este periodo, asigna una calificación de 0.0 a 5.0 que
                             represente tu compromiso, puntualidad y aprendizaje en esta materia.</p>
-                        <div class="alert alert-warning">
+                        <div class="alert alert-warning py-2" style="font-size:clamp(0.78rem, 1.8vw, 0.9rem);">
                             <i class="fas fa-exclamation-triangle me-2"></i>Esta nota representa el <strong>5%</strong>
                             de tu calificación final del periodo.
                         </div>
@@ -36,7 +36,7 @@
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">Guardar Autoevaluación</button>
+                            <button type="submit" class="btn btn-primary py-2">Guardar Autoevaluación</button>
                             <a href="{% url 'mis_notas' %}" class="btn btn-outline-secondary">Volver a mis notas</a>
                         </div>
                     </form>
@@ -48,9 +48,12 @@
 
 <style>
     input[type="number"] {
-        font-size: 2rem !important;
+        font-size: clamp(1.5rem, 5vw, 2rem) !important;
         height: auto !important;
-        padding: 1rem !important;
+        padding: 0.5rem !important;
+    }
+    @media (min-width: 768px) {
+        input[type="number"] { padding: 1rem !important; }
     }
 </style>
 {% endblock %}
