@@ -133,8 +133,64 @@
                         <img src="{% static 'img/escudo.png' %}" alt="Escudo" style="height:36px;width:36px;object-fit:contain;margin-right:8px;">
                         <span class="d-none d-sm-inline" style="font-size:clamp(0.7rem, 2vw, 1.1rem);">I.E Agroambiental Agua Clara</span>
                     </a>
+                </div>
 
-                    <button class="navbar-toggler ms-auto border-0 p-1" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <div class="d-flex align-items-center flex-shrink-0 gap-1">
+                    {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <a class="p-1 p-lg-2 link-secondary position-relative d-block" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell" style="font-size:clamp(0.95rem, 2.5vw, 1.2rem);"></i>
+                            {% if unread_notifications_count %}
+                            <span class="notification-badge">{{ unread_notifications_count }}</span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 py-0" style="width: 280px;">
+                            <li><h6 class="dropdown-header py-3 bg-light rounded-top">Notificaciones</h6></li>
+                            <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;">
+                                {% for notif in internal_notifications|slice:":5" %}
+                                <div class="list-group-item py-2 border-0 {% if not notif.leido %}bg-light-info{% endif %}">
+                                    <div class="small">{{ notif.mensaje }}</div>
+                                    <div class="text-muted x-small">{{ notif.fecha_creacion|timesince }}</div>
+                                </div>
+                                {% empty %}
+                                <div class="p-3 text-center text-muted small">Sin avisos</div>
+                                {% endfor %}
+                            </div>
+                        </ul>
+                    </div>
+
+                    <div class="dropdown">
+                        <a class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle gap-1 gap-lg-2" href="#"
+                            role="button" data-bs-toggle="dropdown">
+                            <img src="https://ui-avatars.com/api/?name={{ user.get_full_name|default:user.username|urlencode }}&background=0ea5e9&color=fff&bold=true"
+                                class="rounded-circle border" width="32" height="32" alt="Avatar" style="width:clamp(26px, 5vw, 32px);height:clamp(26px, 5vw, 32px);">
+                            <span class="d-none d-md-inline fw-semibold" style="font-size:0.88rem; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                                {{ user.get_full_name|default:user.username }}
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                            <li>
+                                <div class="px-3 py-2 border-bottom">
+                                    <div class="fw-bold" style="font-size:0.9rem;">{{ user.get_full_name|default:user.username }}</div>
+                                    <div class="text-muted" style="font-size:0.78rem;">{% if user.is_superuser %}Administrador{% else %}{{ user.get_rol_display }}{% endif %}</div>
+                                </div>
+                            </li>
+                            <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
+                            {% if not user.is_superuser %}<li><a class="dropdown-item" href="{% url 'perfil' %}">Perfil</a></li>{% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{% url 'logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger">Salir</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-sm px-3 rounded-pill shadow-sm">Iniciar Sesión</a>
+                    {% endif %}
+
+                    <button class="navbar-toggler border-0 p-1" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fas fa-bars fa-lg"></i>
                     </button>
                 </div>
@@ -148,62 +204,6 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'admisiones' %}">Admisiones</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'contacto' %}">Contacto</a></li>
                     </ul>
-
-                    <div class="d-flex align-items-center flex-shrink-0 mt-2 mt-lg-0 ms-lg-auto ps-lg-3 border-top border-lg-top-0 pt-2 pt-lg-0">
-                        {% if user.is_authenticated %}
-                        <div class="dropdown me-2">
-                            <a class="p-1 p-lg-2 link-secondary position-relative d-block" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-bell" style="font-size:clamp(0.95rem, 2.5vw, 1.2rem);"></i>
-                                {% if unread_notifications_count %}
-                                <span class="notification-badge">{{ unread_notifications_count }}</span>
-                                {% endif %}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 py-0" style="width: 280px;">
-                                <li><h6 class="dropdown-header py-3 bg-light rounded-top">Notificaciones</h6></li>
-                                <div class="list-group list-group-flush" style="max-height: 250px; overflow-y: auto;">
-                                    {% for notif in internal_notifications|slice:":5" %}
-                                    <div class="list-group-item py-2 border-0 {% if not notif.leido %}bg-light-info{% endif %}">
-                                        <div class="small">{{ notif.mensaje }}</div>
-                                        <div class="text-muted x-small">{{ notif.fecha_creacion|timesince }}</div>
-                                    </div>
-                                    {% empty %}
-                                    <div class="p-3 text-center text-muted small">Sin avisos</div>
-                                    {% endfor %}
-                                </div>
-                            </ul>
-                        </div>
-
-                        <div class="dropdown">
-                            <a class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle gap-1 gap-lg-2" href="#"
-                                role="button" data-bs-toggle="dropdown">
-                                <img src="https://ui-avatars.com/api/?name={{ user.get_full_name|default:user.username|urlencode }}&background=0ea5e9&color=fff&bold=true"
-                                    class="rounded-circle border" width="32" height="32" alt="Avatar" style="width:clamp(26px, 5vw, 32px);height:clamp(26px, 5vw, 32px);">
-                                <span class="d-none d-md-inline fw-semibold" style="font-size:0.88rem; max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                                    {{ user.get_full_name|default:user.username }}
-                                </span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
-                                <li>
-                                    <div class="px-3 py-2 border-bottom">
-                                        <div class="fw-bold" style="font-size:0.9rem;">{{ user.get_full_name|default:user.username }}</div>
-                                        <div class="text-muted" style="font-size:0.78rem;">{% if user.is_superuser %}Administrador{% else %}{{ user.get_rol_display }}{% endif %}</div>
-                                    </div>
-                                </li>
-                                <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
-                                {% if not user.is_superuser %}<li><a class="dropdown-item" href="{% url 'perfil' %}">Perfil</a></li>{% endif %}
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <form action="{% url 'logout' %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="dropdown-item text-danger">Salir</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                        {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-primary btn-sm px-3 rounded-pill shadow-sm w-100">Iniciar Sesión</a>
-                        {% endif %}
-                    </div>
                 </div>
             </div>
         </nav>
