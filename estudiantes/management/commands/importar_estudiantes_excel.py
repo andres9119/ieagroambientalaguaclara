@@ -226,6 +226,7 @@ class Command(BaseCommand):
                     estudiante, est_created = Estudiante.objects.get_or_create(
                         usuario=user,
                         defaults={
+                            'pago_certificado': True,
                             'fecha_nacimiento': fecha_nac or datetime(anio, 1, 1).date(),
                             'acudiente': last_name or 'SIN ACUDIENTE',
                             'tipo_documento': tipo_doc,

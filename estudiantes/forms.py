@@ -79,7 +79,7 @@ class EstudianteEditForm(forms.ModelForm):
             'tipo_documento', 'fecha_nacimiento', 'acudiente',
             'telefono', 'celular', 'direccion', 'barrio',
             'lugar_nacimiento', 'genero', 'rh', 'eps', 'estrato',
-            'pago_certificado', 'nui', 'etnia', 'discapacidad',
+            'nui', 'etnia', 'discapacidad',
             'jornada', 'zona', 'pais_origen', 'estado_matricula',
             'modelo_educativo', 'fuente_recursos', 'campesino',
             'categoria_aula',
@@ -97,7 +97,6 @@ class EstudianteEditForm(forms.ModelForm):
             'rh': forms.Select(attrs={'class': 'form-select'}),
             'eps': forms.TextInput(attrs={'class': 'form-control'}),
             'estrato': forms.Select(attrs={'class': 'form-select'}),
-            'pago_certificado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
     def __init__(self, *args, **kwargs):
