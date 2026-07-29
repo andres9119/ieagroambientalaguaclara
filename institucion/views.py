@@ -154,6 +154,8 @@ class DocumentosListView(TemplateView):
             while CertificadoEmitido.objects.filter(codigo=codigo).exists():
                 codigo = str(random.randint(1000000000, 9999999999))
 
+            sede_nombre = curso.sede.nombre if curso and curso.sede else (getattr(get_info(), 'sede_principal', '') or 'Sede Principal')
+
             cert = CertificadoEmitido.objects.create(
                 codigo=codigo,
                 estudiante_nombre=estudiante.usuario.get_full_name() or estudiante.usuario.username,
@@ -162,7 +164,7 @@ class DocumentosListView(TemplateView):
                 grado=curso.nombre if curso else 'Sin Curso',
                 nivel=curso.nivel if curso else '',
                 anio=timezone.now().year,
-                sede=getattr(get_info(), 'sede_principal', '') or 'Sede Principal',
+                sede=sede_nombre,
             )
 
             estudiante.save()

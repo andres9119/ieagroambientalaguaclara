@@ -11,12 +11,54 @@
 
 {% block content %}
 <div class="container">
-  <h3>Editar Docente</h3>
-  <form method="post" class="mt-3">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-success">Guardar</button>
-    <a href="{% url 'docentes_list' %}" class="btn btn-link">Cancelar</a>
-  </form>
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-primary text-white py-3">
+      <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Editar Docente</h4>
+    </div>
+    <div class="card-body p-4">
+      <form method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+        <div class="alert alert-danger">
+          <strong>Corrige los siguientes errores:</strong>
+          <ul class="mb-0">
+            {% for field in form %}{% for error in field.errors %}<li>{{ field.label }}: {{ error }}</li>{% endfor %}{% endfor %}
+            {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">{{ form.first_name.label }}</label>
+            {{ form.first_name }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">{{ form.last_name.label }}</label>
+            {{ form.last_name }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">{{ form.email.label }}</label>
+            {{ form.email }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">{{ form.telefono.label }}</label>
+            {{ form.telefono }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">{{ form.titulo.label }}</label>
+            {{ form.titulo }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">{{ form.especialidad.label }}</label>
+            {{ form.especialidad }}
+          </div>
+        </div>
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-success px-4"><i class="fas fa-save me-2"></i>Guardar</button>
+          <a href="{% url 'docentes_list' %}" class="btn btn-outline-secondary px-4">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

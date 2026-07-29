@@ -251,6 +251,22 @@ class MateriaUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 from django.contrib.auth.decorators import login_required, user_passes_test
 
+@login_required
+@user_passes_test(lambda u: u.is_authenticated and (u.rol == 'admin' or u.is_superuser))
+def eliminar_curso(request, pk):
+    curso = get_object_or_404(Curso, pk=pk)
+    if request.method == 'POST':
+        nombre = curso.nombre
+        curso.delete()
+        messages.success(request, f'Curso "{nombre}" eliminado correctamente.')
+        return redirect('cursos_list')
+    return render(request, 'academico/confirmar_eliminar.html', {
+        'object': curso,
+        'titulo': 'Eliminar Curso',
+        'mensaje': f'¿Estás seguro de eliminar el curso "{curso.nombre}"?',
+        'cancelar_url': 'cursos_list',
+    })
+
 def is_admin(user):
     return user.is_authenticated and (user.rol == 'admin' or user.is_superuser)
 

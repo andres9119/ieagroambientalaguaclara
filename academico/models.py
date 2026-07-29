@@ -18,9 +18,9 @@ class Sede(models.Model):
 
 
 class Curso(models.Model):
-    nombre = models.CharField(max_length=50, verbose_name="Nombre del Curso", help_text="Ej: 10A, 11B, Preescolar")
+    nombre = models.CharField(max_length=50, verbose_name="Grado")
     descripcion = models.TextField(blank=True, verbose_name="Descripción")
-    nivel = models.CharField(max_length=20, blank=True, verbose_name="Nivel", help_text="Ej: Primaria, Bachillerato")
+    nivel = models.CharField(max_length=50, verbose_name="Nivel")
     tutor = models.ForeignKey('docentes.Docente', on_delete=models.SET_NULL, null=True, blank=True, related_name='cursos_tutor', verbose_name="Titular del Curso")
     sede = models.ForeignKey(Sede, on_delete=models.CASCADE, related_name='cursos', null=True, blank=True, verbose_name="Sede")
     hora_inicio_jornada = models.TimeField(null=True, blank=True, verbose_name="Hora de inicio de jornada")

@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.urls import reverse_lazy, reverse
 from .models import Docente
 from django.contrib.auth import get_user_model
-from .forms import ActividadForm
+from .forms import ActividadForm, DocenteEditForm
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 from django import forms as djforms
@@ -470,7 +470,7 @@ class DocenteListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 class DocenteUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Docente
-    fields = ['especialidad', 'titulo']
+    form_class = DocenteEditForm
     template_name = 'docentes/docente_form.html'
 
     def get_success_url(self):
@@ -484,6 +484,22 @@ class DocenteUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         messages.error(self.request, 'Corrija los errores en el formulario.')
         return super().form_invalid(form)
 
+
+@login_required
+@user_passes_test(lambda u: u.is_authenticated and (u.rol == 'admin' or u.is_superuser))
+def eliminar_docente(request, pk):
+    docente = get_object_or_404(Docente, pk=pk)
+    nombre = docente.usuario.get_full_name() or docente.usuario.username
+    if request.method == 'POST':
+        docente.usuario.delete()
+        messages.success(request, f'Docente "{nombre}" eliminado correctamente.')
+        return redirect('docentes_list')
+    return render(request, 'academico/confirmar_eliminar.html', {
+        'object': docente,
+        'titulo': 'Eliminar Docente',
+        'mensaje': f'¿Estás seguro de eliminar al docente "{nombre}"? También se eliminará su usuario.',
+        'cancelar_url': 'docentes_list',
+    })
 
 @login_required
 def calificar_disciplina(request, curso_id):

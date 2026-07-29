@@ -34,6 +34,7 @@ class Estudiante(models.Model):
         ('CC', 'C.C'),
         ('CE', 'C.E'),
         ('PA', 'Pasaporte'),
+        ('RC', 'R.C'),
     )
 
     GENERO_CHOICES = (

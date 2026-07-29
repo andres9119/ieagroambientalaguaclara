@@ -15,5 +15,6 @@ urlpatterns = [
     path('materia/<int:pk>/editar/', MateriaUpdateView.as_view(), name='materia_editar'),
     path('curso/<int:curso_id>/asignar-docentes/', views.asignar_docentes_curso, name='asignar_docentes_curso'),
     path('curso/<int:curso_id>/promocionar/', views.promocionar_curso, name='promocionar_curso'),
+    path('curso/<int:pk>/eliminar/', views.eliminar_curso, name='eliminar_curso'),
     path('curso/<int:curso_id>/horarios/', views.horarios_curso, name='horarios_curso'),
 ]

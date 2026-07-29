@@ -9,10 +9,11 @@ from estudiantes.models import Estudiante, Matricula
 User = get_user_model()
 
 TIPODOC_MAP = {
-    'TI': 'TI', 'TI:TARJETA DE IDENTIDAD': 'TI',
-    'CC': 'CC', 'CC:CEDULA DE CIUDADANIA': 'CC',
-    'CE': 'CE', 'CE:CEDULA DE EXTRANJERIA': 'CE',
-    'PA': 'PA', 'PA:PASAPORTE': 'PA',
+    'TI': 'TI', 'T.I': 'TI', 'TARJETA DE IDENTIDAD': 'TI',
+    'CC': 'CC', 'C.C': 'CC', 'CEDULA DE CIUDADANIA': 'CC',
+    'CE': 'CE', 'C.E': 'CE', 'CEDULA DE EXTRANJERIA': 'CE',
+    'PA': 'PA', 'PASAPORTE': 'PA',
+    'RC': 'RC', 'R.C': 'RC', 'REGISTRO CIVIL': 'RC',
 }
 
 GENERO_MAP = {

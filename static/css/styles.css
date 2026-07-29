@@ -471,6 +471,35 @@ main {
     .flex-column-mobile { flex-direction: column !important; }
 }
 
+/* Login button modern style */
+.btn-login-nav {
+    background: linear-gradient(135deg, var(--primary-color), #1a5276);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 51, 102, 0.25);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-login-nav:hover {
+    background: linear-gradient(135deg, #1a5276, #0d3b5c);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 51, 102, 0.35);
+}
+
+.btn-login-nav i {
+    font-size: 0.9rem;
+}
+
 /* Better dropdown on mobile */
 @media (max-width: 576px) {
     .dropdown-menu {
