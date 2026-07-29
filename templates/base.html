@@ -197,7 +197,7 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'institucion' %}">Institución</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'documentos' %}">Documentos</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'noticias_list' %}">Noticias</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'admisiones' %}">Admisiones</a></li>
+                        {% comment %} <li class="nav-item"><a class="nav-link" href="{% url 'admisiones' %}">Admisiones</a></li> {% endcomment %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'contacto' %}">Contacto</a></li>
                     </ul>
                     {% if not user.is_authenticated %}
@@ -249,7 +249,7 @@
                     <div class="col-6 col-lg-2 mb-3 mb-lg-0">
                         <h5 class="fw-bold mb-3" style="font-size:clamp(0.8rem, 2vw, 1rem);">Servicios</h5>
                         <ul class="list-unstyled footer-links">
-                            <li><a href="{% url 'admisiones' %}" class="small">Admisiones</a></li>
+                            {% comment %} <li><a href="{% url 'admisiones' %}" class="small">Admisiones</a></li> {% endcomment %}
                             <li><a href="{% url 'login' %}" class="small">Plataforma</a></li>
                             <li><a href="#" class="small">Calendario</a></li>
                             <li><a href="#" class="small">Galería</a></li>
