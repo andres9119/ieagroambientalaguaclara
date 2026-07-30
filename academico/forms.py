@@ -21,6 +21,7 @@ GRADO_CHOICES = [
 
 NIVEL_CHOICES = [
     ('', '---------'),
+    ('Preescolar', 'Preescolar'),
     ('Básica Primaria', 'Básica Primaria'),
     ('Básica Secundaria', 'Básica Secundaria'),
     ('Media Técnica', 'Media Técnica'),
