@@ -101,12 +101,17 @@
                                         step="0.01" min="0" max="5"
                                         {% if col.calif and col.calif.nota > 0 %}value="{{ col.calif.nota|stringformat:'s'|default:''|safe }}"{% else %}value=""{% endif %}
                                         placeholder="—">
-                                    <div class="obs-field" style="display:none;">
-                                        <textarea name="obs_{{ row.estudiante.id }}_{{ col.periodo }}"
-                                            class="obs-input mt-1"
-                                            placeholder="Observación P{{ col.periodo }}..."
-                                            rows="1">{% if col.calif %}{{ col.calif.observaciones }}{% endif %}</textarea>
-                                    </div>
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary mt-1 obs-btn"
+                                        data-bs-toggle="modal" data-bs-target="#obsModal"
+                                        data-estudiante="{{ row.estudiante.id }}"
+                                        data-periodo="{{ col.periodo }}"
+                                        data-estudiante-nombre="{{ row.estudiante.display_name }}"
+                                        data-observacion="{% if col.calif %}{{ col.calif.observaciones }}{% endif %}">
+                                        <i class="fas fa-comment-alt" style="font-size:0.7rem;"></i>
+                                    </button>
+                                    <textarea name="obs_{{ row.estudiante.id }}_{{ col.periodo }}"
+                                        class="obs-input d-none"
+                                        rows="1">{% if col.calif %}{{ col.calif.observaciones }}{% endif %}</textarea>
                                 </div>
                             </td>
                             {% endfor %}
@@ -171,6 +176,25 @@
             </div>
         </div>
     </form>
+<!-- Modal Observaciones -->
+<div class="modal fade" id="obsModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-comment-alt me-2 text-primary"></i>Observación Pedagógica</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-2"><strong>Estudiante:</strong> <span id="obs-estudiante-nombre"></span></p>
+        <p class="mb-2"><strong>Periodo:</strong> <span id="obs-periodo-label"></span></p>
+        <textarea id="obs-textarea-modal" class="form-control" rows="6" placeholder="Escribe aquí la observación pedagógica..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="obs-guardar-modal">Guardar Observación</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <style>
@@ -305,17 +329,38 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Toggle observaciones
-    const btnToggleObs = document.getElementById('btn-toggle-obs');
-    const obsFields = document.querySelectorAll('.obs-field');
-    let obsVisible = false;
+    // Modal observaciones
+    const obsModal = document.getElementById('obsModal');
+    const obsTextarea = document.getElementById('obs-textarea-modal');
+    const obsEstudiante = document.getElementById('obs-estudiante-nombre');
+    const obsPeriodo = document.getElementById('obs-periodo-label');
+    let obsTargetInput = null;
 
-    btnToggleObs.addEventListener('click', function () {
-        obsVisible = !obsVisible;
-        obsFields.forEach(f => f.style.display = obsVisible ? 'block' : 'none');
-        btnToggleObs.innerHTML = obsVisible
-            ? '<i class="fas fa-eye-slash me-1"></i>Ocultar Obs.'
-            : '<i class="fas fa-comment-alt me-1"></i>Observaciones';
+    document.querySelectorAll('.obs-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const estudianteId = this.dataset.estudiante;
+            const periodo = this.dataset.periodo;
+            const estudianteNombre = this.dataset.estudianteNombre;
+            const observacion = this.dataset.observacion || '';
+            obsEstudiante.textContent = estudianteNombre;
+            obsPeriodo.textContent = 'Periodo ' + periodo;
+            obsTextarea.value = observacion;
+            obsTargetInput = document.querySelector('textarea[name="obs_' + estudianteId + '_' + periodo + '"]');
+        });
+    });
+
+    document.getElementById('obs-guardar-modal').addEventListener('click', function () {
+        if (obsTargetInput) {
+            obsTargetInput.value = obsTextarea.value;
+        }
+        const modal = bootstrap.Modal.getInstance(obsModal);
+        if (modal) modal.hide();
+    });
+
+    obsModal.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            document.getElementById('obs-guardar-modal').click();
+        }
     });
 
     // Color coding and validation on input
@@ -331,11 +376,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (val < 0) this.value = 0;
             }
         });
-        // Trigger on load
         if (inp.value) inp.dispatchEvent(new Event('input'));
     });
 
-    // Tab/Enter navigation between inputs
     gradeInputs.forEach(function (inp, idx) {
         inp.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === 'Tab') {

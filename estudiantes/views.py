@@ -83,10 +83,14 @@ class EstudiantesPorCursoView(LoginRequiredMixin, UserPassesTestMixin, ListView)
 
 class EstudiantesCursoDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
-        return self.request.user.rol == 'admin' or self.request.user.is_superuser
+        if self.request.user.rol == 'admin' or self.request.user.is_superuser:
+            return True
+        if self.request.user.rol == 'docente' and hasattr(self.request.user, 'perfil_docente'):
+            curso_id = self.kwargs.get('curso_id')
+            return Curso.objects.filter(id=curso_id, tutor=self.request.user.perfil_docente).exists()
+        return False
 
     def get(self, request, curso_id):
-        curso = get_object_or_404(Curso, id=curso_id)
         qs = Estudiante.objects.filter(matriculas__curso=curso, matriculas__activo=True)
 
         search_query = request.GET.get('q', '').strip()
