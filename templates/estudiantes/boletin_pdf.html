@@ -162,8 +162,15 @@
             font-size: 7pt;
             color: #555;
             text-align: left;
-            padding: 8px 8px;
-            line-height: 1.5;
+            padding: 10px 10px 14px 10px;
+            line-height: 1.8;
+            word-wrap: break-word;
+        }
+        .obs-row td .obs-item {
+            margin-top: 6px;
+            padding: 5px 0 5px 0;
+            border-top: 1px dotted #ccc;
+            line-height: 1.8;
         }
 
         .escala-section {
@@ -317,18 +324,18 @@
             </tr>
             {% endfor %}
             <tr class="obs-row">
-                <td colspan="10" style="background: #f9f9f9; padding: 8px 8px;">
+                <td colspan="10" style="background: #f9f9f9;">
                     <strong>OBSERVACIONES PEDAG&Oacute;GICAS:</strong>
                     {% for materia in nucleo.materias %}
                         {% with p_key=p_actual %}
                             {% if p_key == '1' and materia.p1 and materia.p1.observaciones %}
-                                <div style="margin-top: 4px; padding-top: 4px; border-top: 1px dotted #ccc;"><strong>{{ materia.materia.nombre }}:</strong> {{ materia.p1.observaciones }}</div>
+                                <div class="obs-item"><strong>{{ materia.materia.nombre }}:</strong> {{ materia.p1.observaciones }}</div>
                             {% elif p_key == '2' and materia.p2 and materia.p2.observaciones %}
-                                <div style="margin-top: 4px; padding-top: 4px; border-top: 1px dotted #ccc;"><strong>{{ materia.materia.nombre }}:</strong> {{ materia.p2.observaciones }}</div>
+                                <div class="obs-item"><strong>{{ materia.materia.nombre }}:</strong> {{ materia.p2.observaciones }}</div>
                             {% elif p_key == '3' and materia.p3 and materia.p3.observaciones %}
-                                <div style="margin-top: 4px; padding-top: 4px; border-top: 1px dotted #ccc;"><strong>{{ materia.materia.nombre }}:</strong> {{ materia.p3.observaciones }}</div>
+                                <div class="obs-item"><strong>{{ materia.materia.nombre }}:</strong> {{ materia.p3.observaciones }}</div>
                             {% elif p_key == '4' and materia.p4 and materia.p4.observaciones %}
-                                <div style="margin-top: 4px; padding-top: 4px; border-top: 1px dotted #ccc;"><strong>{{ materia.materia.nombre }}:</strong> {{ materia.p4.observaciones }}</div>
+                                <div class="obs-item"><strong>{{ materia.materia.nombre }}:</strong> {{ materia.p4.observaciones }}</div>
                             {% endif %}
                         {% endwith %}
                     {% endfor %}
