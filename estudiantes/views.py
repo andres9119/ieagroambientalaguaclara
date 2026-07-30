@@ -83,14 +83,17 @@ class EstudiantesPorCursoView(LoginRequiredMixin, UserPassesTestMixin, ListView)
 
 class EstudiantesCursoDetailView(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
-        if self.request.user.rol == 'admin' or self.request.user.is_superuser:
-            return True
-        if self.request.user.rol == 'docente' and hasattr(self.request.user, 'perfil_docente'):
-            curso_id = self.kwargs.get('curso_id')
-            return Curso.objects.filter(id=curso_id, tutor=self.request.user.perfil_docente).exists()
-        return False
+        return (self.request.user.rol == 'admin' or
+                self.request.user.is_superuser or
+                (self.request.user.rol == 'docente' and
+                 hasattr(self.request.user, 'perfil_docente') and
+                 Curso.objects.filter(tutor=self.request.user.perfil_docente).exists()))
 
     def get(self, request, curso_id):
+        curso = get_object_or_404(Curso, id=curso_id)
+        if request.user.rol == 'docente' and curso.tutor != getattr(request.user, 'perfil_docente', None):
+            from django.http import HttpResponseForbidden
+            return HttpResponseForbidden("No autorizado")
         qs = Estudiante.objects.filter(matriculas__curso=curso, matriculas__activo=True)
 
         search_query = request.GET.get('q', '').strip()
