@@ -18,4 +18,5 @@ urlpatterns = [
     path('actividades/crear/<int:asignacion_id>/', actividad_crear, name='actividad_crear'),
     path('actividades/calificar/<int:actividad_id>/', actividad_calificar, name='actividad_calificar'),
     path('curso/<int:curso_id>/disciplina/', views.calificar_disciplina, name='calificar_disciplina'),
+    path('curso/<int:curso_id>/boletines/', views.descargar_boletines_curso, name='descargar_boletines_curso'),
 ]

@@ -168,8 +168,8 @@
                 <div>REPUBLICA DE COLOMBIA</div>
                 <div>{{ departamento }}</div>
                 <div class="main-name">{{ nombre_colegio }}</div>
-                <div>RESOLUCION N&deg;: {{ resolucion }}</div>
-                <div>CODIGO DANE N&deg;: {{ dane }} &nbsp;&nbsp;&nbsp; NIT: {{ nit }}</div>
+                <div>RESOLUCI&Oacute;N N&deg;: {{ resolucion }}</div>
+                <div>C&Oacute;DIGO DANE N&deg;: {{ dane }} &nbsp;&nbsp;&nbsp; NIT: {{ nit }}</div>
                 <div>{{ municipio }} {{ departamento }}</div>
             </td>
             <td class="header-right">
@@ -187,23 +187,21 @@
         Fecha: {{ fecha|date:"d/m/Y" }}
     </div>
 
-    <div class="cert-title">CERTIFICA QUE:</div>
-
-    <div class="body-text">
-        La Suscrita Rectora de la <span class="highlight">{{ nombre_colegio }}</span>,
+    <div class="cert-title">
+        LA SUSCRITA RECTORA DE LA {{ nombre_colegio }} CERTIFICA:
     </div>
 
-    <div class="body-text" style="margin-top: 6px;">
-        Que el (la) estudiante <span class="highlight" style="text-transform: capitalize;">{{ nombre_completo }}</span>,
-        Con Documento de identidad tipo <span class="highlight">{{ tipo_documento }}</span>
-        N&uacute;mero <span class="highlight">{{ numero_documento }}</span>, se encuentra cursando el grado
-        <span class="highlight" style="text-transform: capitalize;">{{ grado }}</span>, correspondiente a
-        <span class="highlight" style="text-transform: capitalize;">{{ nivel }}</span>, en la sede
-        <span class="highlight" style="text-transform: capitalize;">{{ sede }}</span>, durante a&ntilde;o lectivo
-        <span class="highlight">{{ anio }}</span>, Calendario
-        <span class="highlight">{{ calendario }}</span>, Jornada
-        <span class="highlight">{{ jornada }}</span> en el Horario de
-        <span class="highlight">{{ horario }}</span>.
+    <div class="body-text">
+        Que el estudiante {{ nombre_completo }},
+        con documento de identidad tipo {{ tipo_documento }}
+        n&uacute;mero {{ numero_documento }}, se encuentra cursando el grado
+        {{ grado }}, correspondiente a
+        {{ nivel }}, en la sede
+        {{ sede }}, durante a&ntilde;o lectivo
+        {{ anio }}, calendario
+        {{ calendario }}, jornada
+        {{ jornada }} en el horario de
+        {{ horario }}.
     </div>
 
     <div class="body-text">

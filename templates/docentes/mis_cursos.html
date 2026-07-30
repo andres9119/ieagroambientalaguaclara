@@ -192,6 +192,12 @@
           <a href="{% url 'horarios_curso' c.id %}" class="btn btn-outline-info btn-sm">
             <i class="fas fa-clock me-1"></i>Horario {{ c.nombre }}
           </a>
+          <a href="{% url 'descargar_boletines_curso' c.id %}" class="btn btn-outline-success btn-sm">
+            <i class="fas fa-file-pdf me-1"></i>Boletines {{ c.nombre }}
+          </a>
+          <a href="{% url 'estudiantes_por_curso_detalle' c.id %}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-users me-1"></i>Ver estudiantes
+          </a>
           {% endfor %}
         </div>
       </div>

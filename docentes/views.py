@@ -28,15 +28,17 @@ def crear_docente(request):
             data = form.cleaned_data
             username = data['username']
             password = data['password'] or User.objects.make_random_password()
-            user = User.objects.create_user(username=username, email=data.get('email',''))
+            user = User.objects.create_user(username=username, email=data.get('email',''), rol='docente')
             user.first_name = data.get('first_name','')
             user.last_name = data.get('last_name','')
             user.set_password(password)
-            user.rol = 'docente'
             user.must_change_password = True
             user.save()
 
-            docente = Docente.objects.create(usuario=user, especialidad=data.get('especialidad',''), titulo=data.get('titulo',''))
+            docente = user.perfil_docente
+            docente.especialidad = data.get('especialidad','')
+            docente.titulo = data.get('titulo','')
+            docente.save()
             messages.success(request, f'Docente {user.get_full_name() or user.username} creado. Usuario: {username}')
             return redirect('dashboard')
         else:
@@ -500,6 +502,40 @@ def eliminar_docente(request, pk):
         'mensaje': f'¿Estás seguro de eliminar al docente "{nombre}"? También se eliminará su usuario.',
         'cancelar_url': 'docentes_list',
     })
+
+@login_required
+def descargar_boletines_curso(request, curso_id):
+    from academico.models import Curso
+    curso = get_object_or_404(Curso, id=curso_id)
+    if not (request.user.is_superuser or request.user.rol == 'admin' or
+            (hasattr(request.user, 'perfil_docente') and curso.tutor == request.user.perfil_docente)):
+        return HttpResponse("No autorizado", status=403)
+
+    import zipfile
+    from io import BytesIO
+    from estudiantes.models import Estudiante
+    from estudiantes.views import generar_boletin_pdf_estudiante
+
+    estudiantes = Estudiante.objects.filter(
+        matriculas__curso=curso, matriculas__activo=True
+    ).select_related('usuario')
+
+    zip_buffer = BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
+        for e in estudiantes:
+            pdf_response = generar_boletin_pdf_estudiante(e, request)
+            if pdf_response:
+                filename = f"Boletin_{e.usuario.username}.pdf"
+                if hasattr(pdf_response, 'content'):
+                    zf.writestr(filename, pdf_response.content)
+                else:
+                    zf.writestr(filename, pdf_response)
+
+    zip_buffer.seek(0)
+    response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
+    response['Content-Disposition'] = f'attachment; filename="Boletines_{curso.nombre}.zip"'
+    return response
+
 
 @login_required
 def calificar_disciplina(request, curso_id):

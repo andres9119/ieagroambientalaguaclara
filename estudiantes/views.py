@@ -315,6 +315,107 @@ class MiHorarioView(LoginRequiredMixin, TemplateView):
         return ctx
 
 
+def generar_boletin_pdf_estudiante(estudiante, request=None):
+    from pathlib import Path
+    from institucion.models import InformacionInstitucional
+    matricula_activa = estudiante.matriculas.filter(activo=True).first()
+    curso = matricula_activa.curso if matricula_activa else None
+    curso_nombre = curso.nombre if curso else 'Sin Curso'
+    anio_lectivo = matricula_activa.anio_lectivo if matricula_activa else timezone.now().year
+    materias_curso = estudiante.get_materias()
+    ahora = timezone.now()
+    mes = ahora.month
+    if 2 <= mes <= 4:
+        p_actual = '1'
+    elif 5 <= mes <= 7:
+        p_actual = '2'
+    elif 8 <= mes <= 9:
+        p_actual = '3'
+    else:
+        p_actual = '4'
+
+    def get_escala(nota):
+        if nota >= 4.6:
+            return 'Superior'
+        elif nota >= 4.0:
+            return 'Alto'
+        elif nota >= 3.0:
+            return 'Básico'
+        else:
+            return 'Bajo'
+
+    area_colors = {
+        'TERRITORIO AGROAMBIENTAL': '#2d6a2d',
+        'LENGUAJE Y COMUNICACIÓN': '#cc6b2c',
+        'ORGANIZACIÓN POLÍTICA Y CULTURA': '#2b5797',
+        'CONVIVENCIA': '#8b4513',
+    }
+
+    boletin_agrupado = {}
+    for cm in materias_curso:
+        area_nombre = cm.materia.area.strip().upper() if cm.materia.area else 'OTRAS ÁREAS'
+        if area_nombre not in boletin_agrupado:
+            boletin_agrupado[area_nombre] = {
+                'nombre': area_nombre,
+                'color': area_colors.get(area_nombre, '#555555'),
+                'materias': [],
+            }
+        calificaciones_qs = Calificacion.objects.filter(estudiante=estudiante, curso_materia=cm)
+        c_map = {c.periodo: c for c in calificaciones_qs}
+        nota_anual = estudiante.get_nota_anual_materia(cm)
+        faltas_materia = estudiante.asistencias.filter(curso_materia=cm, asistio=False).count()
+        obj_text = getattr(cm, f'objetivo_p{p_actual}', '')
+        boletin_agrupado[area_nombre]['materias'].append({
+            'materia': cm.materia,
+            'p1': c_map.get('1'),
+            'p2': c_map.get('2'),
+            'p3': c_map.get('3'),
+            'p4': c_map.get('4'),
+            'nota_anual': nota_anual,
+            'escala': get_escala(nota_anual),
+            'docente': cm.docente,
+            'faltas': faltas_materia,
+            'obj_periodo': obj_text,
+        })
+
+    nombre_completo = f"{estudiante.usuario.first_name} {estudiante.usuario.last_name}".strip()
+    if not nombre_completo:
+        nombre_completo = estudiante.usuario.username
+
+    fallas_totales = estudiante.asistencias.filter(asistio=False).count()
+
+    escudo_path = str(Path(__file__).resolve().parent.parent / 'static' / 'img' / 'escudo.png')
+
+    info = InformacionInstitucional.objects.first()
+
+    disciplina = None
+    if curso:
+        try:
+            disciplina = Disciplina.objects.get(estudiante=estudiante, periodo=p_actual, anio_lectivo=anio_lectivo)
+        except Disciplina.DoesNotExist:
+            pass
+
+    data = {
+        'info': info,
+        'disciplina': disciplina,
+        'estudiante': estudiante,
+        'nombre_completo': nombre_completo,
+        'curso': curso_nombre,
+        'nivel': curso.nivel if curso else '',
+        'anio': anio_lectivo,
+        'boletin_agrupado': list(boletin_agrupado.values()),
+        'tipo_documento': estudiante.get_tipo_documento_display(),
+        'numero_documento': estudiante.usuario.username,
+        'fallas_totales': fallas_totales,
+        'fecha': ahora,
+        'escudo_path': escudo_path,
+        'periodo_actual': f'Periodo {p_actual} - {anio_lectivo}',
+        'p_actual': p_actual,
+    }
+
+    return render_to_pdf('estudiantes/boletin_pdf.html', data)
+
+
 class GenerarBoletinPDF(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         puede_ver_todos = request.user.rol in ('admin', 'docente') or request.user.is_superuser
@@ -325,107 +426,8 @@ class GenerarBoletinPDF(LoginRequiredMixin, View):
             estudiante = request.user.perfil_estudiante
         else:
             return redirect('dashboard')
-        matricula_activa = estudiante.matriculas.filter(activo=True).first()
-        curso = matricula_activa.curso if matricula_activa else None
-        curso_nombre = curso.nombre if curso else 'Sin Curso'
-        anio_lectivo = matricula_activa.anio_lectivo if matricula_activa else timezone.now().year
-        materias_curso = estudiante.get_materias()
-        ahora = timezone.now()
-        mes = ahora.month
-        if 2 <= mes <= 4:
-            p_actual = '1'
-        elif 5 <= mes <= 7:
-            p_actual = '2'
-        elif 8 <= mes <= 9:
-            p_actual = '3'
-        else:
-            p_actual = '4'
 
-        def get_escala(nota):
-            if nota >= 4.6:
-                return 'Superior'
-            elif nota >= 4.0:
-                return 'Alto'
-            elif nota >= 3.0:
-                return 'Básico'
-            else:
-                return 'Bajo'
-
-        area_colors = {
-            'TERRITORIO AGROAMBIENTAL': '#2d6a2d',
-            'LENGUAJE Y COMUNICACIÓN': '#cc6b2c',
-            'ORGANIZACIÓN POLÍTICA Y CULTURA': '#2b5797',
-            'CONVIVENCIA': '#8b4513',
-        }
-
-        boletin_agrupado = {}
-        for cm in materias_curso:
-            area_nombre = cm.materia.area.strip().upper() if cm.materia.area else 'OTRAS ÁREAS'
-            if area_nombre not in boletin_agrupado:
-                boletin_agrupado[area_nombre] = {
-                    'nombre': area_nombre,
-                    'color': area_colors.get(area_nombre, '#555555'),
-                    'materias': [],
-                }
-
-            calificaciones_qs = Calificacion.objects.filter(estudiante=estudiante, curso_materia=cm)
-            c_map = {c.periodo: c for c in calificaciones_qs}
-            nota_anual = estudiante.get_nota_anual_materia(cm)
-
-            faltas_materia = estudiante.asistencias.filter(curso_materia=cm, asistio=False).count()
-
-            obj_text = getattr(cm, f'objetivo_p{p_actual}', '')
-
-            boletin_agrupado[area_nombre]['materias'].append({
-                'materia': cm.materia,
-                'p1': c_map.get('1'),
-                'p2': c_map.get('2'),
-                'p3': c_map.get('3'),
-                'p4': c_map.get('4'),
-                'nota_anual': nota_anual,
-                'escala': get_escala(nota_anual),
-                'docente': cm.docente,
-                'faltas': faltas_materia,
-                'obj_periodo': obj_text,
-            })
-
-        nombre_completo = f"{estudiante.usuario.first_name} {estudiante.usuario.last_name}".strip()
-        if not nombre_completo:
-            nombre_completo = estudiante.usuario.username
-
-        fallas_totales = estudiante.asistencias.filter(asistio=False).count()
-
-        escudo_path = str(Path(__file__).resolve().parent.parent / 'static' / 'img' / 'escudo.png')
-
-        from institucion.models import InformacionInstitucional
-        info = InformacionInstitucional.objects.first()
-
-        disciplina = None
-        if curso:
-            try:
-                disciplina = Disciplina.objects.get(estudiante=estudiante, periodo=p_actual, anio_lectivo=anio_lectivo)
-            except Disciplina.DoesNotExist:
-                pass
-
-        data = {
-            'info': info,
-            'disciplina': disciplina,
-            'estudiante': estudiante,
-            'nombre_completo': nombre_completo,
-            'curso': curso_nombre,
-            'nivel': curso.nivel if curso else '',
-            'anio': anio_lectivo,
-            'boletin_agrupado': list(boletin_agrupado.values()),
-            'tipo_documento': estudiante.get_tipo_documento_display(),
-            'numero_documento': estudiante.usuario.username,
-            'fallas_totales': fallas_totales,
-            'fecha': ahora,
-            'escudo_path': escudo_path,
-            'periodo_actual': f'Periodo {p_actual} - {anio_lectivo}',
-            'p_actual': p_actual,
-        }
-
-        pdf_response = render_to_pdf('estudiantes/boletin_pdf.html', data)
+        pdf_response = generar_boletin_pdf_estudiante(estudiante, request)
         if pdf_response:
             filename = f"Boletin_{estudiante.usuario.username}.pdf"
             content = f"inline; filename={filename}"
@@ -433,6 +435,22 @@ class GenerarBoletinPDF(LoginRequiredMixin, View):
             return pdf_response
         return HttpResponse("Error generando PDF", status=400)
 
+
+@login_required
+@user_passes_test(lambda u: u.is_authenticated and (u.rol == 'admin' or u.is_superuser))
+def eliminar_estudiante(request, pk):
+    estudiante = get_object_or_404(Estudiante, pk=pk)
+    nombre = estudiante.usuario.get_full_name() or estudiante.usuario.username
+    if request.method == 'POST':
+        estudiante.usuario.delete()
+        messages.success(request, f'Estudiante "{nombre}" eliminado correctamente.')
+        return redirect('estudiantes_por_curso')
+    return render(request, 'academico/confirmar_eliminar.html', {
+        'object': estudiante,
+        'titulo': 'Eliminar Estudiante',
+        'mensaje': f'¿Estás seguro de eliminar al estudiante "{nombre}"? También se eliminará su usuario.',
+        'cancelar_url': 'estudiantes_por_curso',
+    })
 
 from django.contrib.auth.decorators import login_required, user_passes_test
 

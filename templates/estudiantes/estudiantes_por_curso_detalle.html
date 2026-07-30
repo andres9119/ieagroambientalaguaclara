@@ -57,6 +57,7 @@
           <td class="text-nowrap">
             <a href="{% url 'generar_boletin_pdf' %}?estudiante_id={{ e.id }}" class="btn btn-sm btn-outline-danger" target="_blank"><i class="fas fa-file-pdf"></i> Boletín</a>
             <a href="{% url 'estudiante_editar' e.id %}?curso={{ curso.id }}" class="btn btn-sm btn-outline-primary">Editar</a>
+            <a href="{% url 'eliminar_estudiante' e.id %}" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
           </td>
         </tr>
         {% endfor %}

@@ -253,6 +253,22 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 @login_required
 @user_passes_test(lambda u: u.is_authenticated and (u.rol == 'admin' or u.is_superuser))
+def eliminar_materia(request, pk):
+    materia = get_object_or_404(Materia, pk=pk)
+    if request.method == 'POST':
+        nombre = materia.nombre
+        materia.delete()
+        messages.success(request, f'Materia "{nombre}" eliminada correctamente.')
+        return redirect('materias_list')
+    return render(request, 'academico/confirmar_eliminar.html', {
+        'object': materia,
+        'titulo': 'Eliminar Materia',
+        'mensaje': f'¿Estás seguro de eliminar la materia "{materia.nombre}"? Se eliminará de todos los cursos donde esté asignada.',
+        'cancelar_url': 'materias_list',
+    })
+
+@login_required
+@user_passes_test(lambda u: u.is_authenticated and (u.rol == 'admin' or u.is_superuser))
 def eliminar_curso(request, pk):
     curso = get_object_or_404(Curso, pk=pk)
     if request.method == 'POST':
@@ -289,13 +305,18 @@ def asignar_docentes_curso(request, curso_id):
     # Asegurar que existan materias asignadas
     queryset = CursoMateria.objects.filter(curso=curso).select_related('materia', 'docente__usuario').order_by('materia__nombre')
 
+    class CursoMateriaDocenteForm(forms.ModelForm):
+        class Meta:
+            model = CursoMateria
+            fields = ('docente',)
+            widgets = {
+                'docente': forms.Select(attrs={'class': 'form-select form-select-sm docente-select'})
+            }
+
     DocenteFormSet = modelformset_factory(
         CursoMateria,
-        fields=('docente',),
+        form=CursoMateriaDocenteForm,
         extra=0,
-        widgets={
-            'docente': forms.Select(attrs={'class': 'form-select form-select-sm docente-select'})
-        }
     )
 
     if request.method == 'POST':

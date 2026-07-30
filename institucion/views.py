@@ -124,7 +124,7 @@ class DocumentosListView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         if not (request.user.is_authenticated and hasattr(request.user, 'perfil_estudiante')):
-            messages.error(request, 'Debes iniciar sesion como estudiante para solicitar el certificado.')
+            messages.error(request, 'Debes iniciar sesión como estudiante para solicitar el certificado.')
             return self.get(request, *args, **kwargs)
 
         form = SolicitarCertificadoForm(request.POST)
@@ -144,7 +144,7 @@ class DocumentosListView(TemplateView):
                 fecha_emision__gte=desde
             ).count()
             if descargas_mes >= MAX_CERTIFICADOS_POR_MES:
-                messages.error(request, f'Has alcanzado el limite de {MAX_CERTIFICADOS_POR_MES} certificados por mes. Intentelo de nuevo el proximo mes.')
+                messages.error(request, f'Has alcanzado el límite de {MAX_CERTIFICADOS_POR_MES} certificados por mes. Inténtelo de nuevo el próximo mes.')
                 return self.get(request, *args, **kwargs)
 
             matricula_activa = estudiante.matriculas.filter(activo=True).first()
@@ -231,7 +231,7 @@ class GenerarCertificadoEstudiosPDF(View):
             pdf_response['Content-Disposition'] = f'attachment; filename="{filename}"'
             return pdf_response
 
-        messages.error(request, 'Ocurrio un error al generar el certificado.')
+        messages.error(request, 'Ocurrió un error al generar el certificado.')
         return redirect('documentos')
 
 
@@ -256,7 +256,7 @@ class VerificarCertificadoView(TemplateView):
                 context['certificado'] = cert
                 context['valido'] = True
             else:
-                messages.error(request, 'El codigo ingresado no es valido o ha sido revocado.')
+                messages.error(request, 'El código ingresado no es válido o ha sido revocado.')
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -265,7 +265,7 @@ class VerificarCertificadoView(TemplateView):
         context['codigo'] = codigo
 
         if not codigo:
-            messages.error(request, 'Ingresa un codigo de verificacion.')
+            messages.error(request, 'Ingresa un código de verificación.')
             return render(request, self.template_name, context)
 
         cert = CertificadoEmitido.objects.filter(codigo=codigo, valido=True).first()

@@ -18,15 +18,15 @@ class ActividadForm(forms.ModelForm):
 
 
 class DocenteCreateForm(forms.Form):
-    username = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'class':'form-control'}))
-    first_name = forms.CharField(max_length=150, required=False, widget=forms.TextInput(attrs={'class':'form-control'}))
-    last_name = forms.CharField(max_length=150, required=False, widget=forms.TextInput(attrs={'class':'form-control'}))
-    email = forms.EmailField(required=False, widget=forms.EmailInput(attrs={'class':'form-control'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control'}), required=False)
-    telefono = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'class':'form-control'}))
+    username = forms.CharField(max_length=150, label='Usuario', widget=forms.TextInput(attrs={'class':'form-control'}))
+    first_name = forms.CharField(max_length=150, required=False, label='Nombres', widget=forms.TextInput(attrs={'class':'form-control'}))
+    last_name = forms.CharField(max_length=150, required=False, label='Apellidos', widget=forms.TextInput(attrs={'class':'form-control'}))
+    email = forms.EmailField(required=False, label='Correo electrónico', widget=forms.EmailInput(attrs={'class':'form-control'}))
+    password = forms.CharField(label='Contraseña', widget=forms.PasswordInput(attrs={'class':'form-control'}), required=False)
+    telefono = forms.CharField(max_length=30, required=False, label='Teléfono', widget=forms.TextInput(attrs={'class':'form-control'}))
 
-    especialidad = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class':'form-control'}))
-    titulo = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class':'form-control'}))
+    especialidad = forms.CharField(max_length=100, label='Especialidad', widget=forms.TextInput(attrs={'class':'form-control'}))
+    titulo = forms.CharField(max_length=100, label='Título', widget=forms.TextInput(attrs={'class':'form-control'}))
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -36,10 +36,10 @@ class DocenteCreateForm(forms.Form):
 
 
 class DocenteEditForm(forms.ModelForm):
-    first_name = forms.CharField(max_length=150, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    last_name = forms.CharField(max_length=150, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.EmailField(required=False, widget=forms.EmailInput(attrs={'class': 'form-control'}))
-    telefono = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    first_name = forms.CharField(max_length=150, required=False, label='Nombres', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(max_length=150, required=False, label='Apellidos', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(required=False, label='Correo electrónico', widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    telefono = forms.CharField(max_length=30, required=False, label='Teléfono', widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = Docente

@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             
             // Asignar el valor a todos los selects de la tabla
-            const selectores = document.querySelectorAll('.docente-select');
+            const selectores = document.querySelectorAll('#tabla-materias select');
             let count = 0;
             selectores.forEach(function(select) {
                 select.value = docenteId;
@@ -156,6 +156,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 count++;
             });
+            
+            if (count === 0) {
+                alert('No se encontraron materias para asignar. Asegúrate de que el curso tenga materias asignadas.');
+                return;
+            }
             
             // Notification toast or alert
             const btnOriginalHtml = btnAplicarMasivo.innerHTML;
