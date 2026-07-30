@@ -159,8 +159,9 @@
             font-size: 6.5pt;
             color: #555;
             text-align: left;
-            padding: 8px 8px 10px 8px;
+            padding: 10px 8px 10px 8px;
             line-height: 1.6;
+            vertical-align: top;
         }
         .obs-row td .obs-item {
             margin-top: 2px;
@@ -319,7 +320,7 @@
             </tr>
             <tr class="obs-row">
                 <td colspan="9" style="background: #f9f9f9; border-top: 2px solid #2d6a2d;">
-                    <strong>OBSERVACIONES {{ materia.materia.nombre|upper }}:</strong>
+                    <div style="font-weight:bold;">OBSERVACIONES {{ materia.materia.nombre|upper }}:</div>
                     {% with p_key=p_actual %}
                         {% if p_key == '1' and materia.p1 and materia.p1.observaciones %}
                             <div class="obs-item">{{ materia.p1.observaciones }}</div>
