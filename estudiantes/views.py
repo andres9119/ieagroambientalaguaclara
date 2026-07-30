@@ -436,6 +436,8 @@ class GenerarBoletinPDF(LoginRequiredMixin, View):
         return HttpResponse("Error generando PDF", status=400)
 
 
+from django.contrib.auth.decorators import login_required, user_passes_test
+
 @login_required
 @user_passes_test(lambda u: u.is_authenticated and (u.rol == 'admin' or u.is_superuser))
 def eliminar_estudiante(request, pk):
@@ -451,8 +453,6 @@ def eliminar_estudiante(request, pk):
         'mensaje': f'¿Estás seguro de eliminar al estudiante "{nombre}"? También se eliminará su usuario.',
         'cancelar_url': 'estudiantes_por_curso',
     })
-
-from django.contrib.auth.decorators import login_required, user_passes_test
 
 def admin_required(user):
     return user.is_authenticated and (user.rol == 'admin' or user.is_superuser)
