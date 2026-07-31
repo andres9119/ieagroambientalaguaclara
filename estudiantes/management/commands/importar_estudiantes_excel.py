@@ -1,5 +1,7 @@
 import re
+from pathlib import Path
 from datetime import datetime
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -123,7 +125,27 @@ class Command(BaseCommand):
         creados_users = []
         creados_ests = []
 
+        total_rows = len(rows) - 1
+        progreso_path = Path(settings.BASE_DIR) / 'logs' / 'importacion_progreso.txt'
+        if not dry_run:
+            try:
+                Path(progreso_path.parent).mkdir(parents=True, exist_ok=True)
+                progreso_path.write_text(f'0/{total_rows}', encoding='utf-8')
+            except OSError:
+                pass
+
+        def escribe_progreso(procesadas, estado):
+            if not dry_run:
+                try:
+                    progreso_path.write_text(f'{estado}:{procesadas}/{total_rows}', encoding='utf-8')
+                except OSError:
+                    pass
+
+        procesadas = 0
+
         for i, row in enumerate(rows[1:], start=2):
+            procesadas += 1
+            escribe_progreso(procesadas, 'procesando')
             try:
                 documento = str(row[col['DOC']]).strip()
                 if not documento or documento == 'None':
@@ -314,3 +336,4 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(
             f'\nResumen: {creados} creados, {actualizados} actualizados, {errores} errores, {saltados} saltados (total: {total})'
         ))
+        escribe_progreso(total_rows, 'fin')

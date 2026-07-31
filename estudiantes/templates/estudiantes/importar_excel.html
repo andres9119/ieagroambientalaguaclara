@@ -55,13 +55,66 @@
                     </form>
 
                     {% if resultado %}
-                    <div class="mt-4">
-                        <h5 class="fw-bold mb-2">Resultado:
-                            <a href="{% url 'importar_estudiantes_excel' %}" class="btn btn-sm btn-outline-primary ms-2"><i class="fas fa-sync-alt me-1"></i>Refrescar</a>
-                        </h5>
+                    <div class="mt-4" id="resultado-block">
+                        <h5 class="fw-bold mb-2">Resultado:</h5>
                         <pre class="bg-light p-3 rounded border" style="max-height: 400px; overflow-y: auto; font-size: 13px; white-space: pre-wrap;">{{ resultado }}</pre>
                     </div>
                     {% endif %}
+
+                    <div class="mt-4 d-none" id="progreso-block">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h5 class="fw-bold mb-0">
+                                <span class="spinner-border spinner-border-sm me-2 text-primary-custom" id="progreso-spinner"></span>
+                                Importando...
+                            </h5>
+                            <span class="fw-semibold" id="progreso-texto">0 / 0</span>
+                        </div>
+                        <div class="progress" style="height: 22px;">
+                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" id="progreso-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <small class="text-muted d-block mt-2" id="progreso-estado">Procesando filas...</small>
+                        <pre class="bg-light p-3 rounded border mt-3" style="max-height: 250px; overflow-y: auto; font-size: 12px; white-space: pre-wrap;" id="progreso-log">{{ resultado }}</pre>
+                    </div>
+
+                    <script>
+                        const progresoUrl = "{% url 'importar_progreso' %}";
+                        const resultadoBlock = document.getElementById('resultado-block');
+                        const progresoBlock = document.getElementById('progreso-block');
+                        const progresoBar = document.getElementById('progreso-bar');
+                        const progresoTexto = document.getElementById('progreso-texto');
+                        const progresoEstado = document.getElementById('progreso-estado');
+                        const progresoLog = document.getElementById('progreso-log');
+
+                        function formatear(n) {
+                            return n.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.');
+                        }
+
+                        function pollProgreso() {
+                            fetch(progresoUrl)
+                                .then(r => r.json())
+                                .then(d => {
+                                    progresoBlock.classList.remove('d-none');
+                                    if (resultadoBlock) resultadoBlock.classList.add('d-none');
+
+                                    const pct = d.total > 0 ? Math.round((d.procesadas / d.total) * 100) : 0;
+                                    progresoBar.style.width = pct + '%';
+                                    progresoTexto.textContent = formatear(d.procesadas) + ' / ' + formatear(d.total);
+
+                                    if (d.running) {
+                                        document.getElementById('progreso-spinner').classList.remove('d-none');
+                                        progresoEstado.textContent = 'Procesando fila ' + formatear(d.procesadas) + ' de ' + formatear(d.total) + '...';
+                                        setTimeout(pollProgreso, 2000);
+                                    } else {
+                                        document.getElementById('progreso-spinner').classList.add('d-none');
+                                        progresoEstado.textContent = d.estado === 'fin' ? '¡Importación terminada!' : 'Esperando inicio...';
+                                        setTimeout(pollProgreso, 4000);
+                                    }
+                                })
+                                .catch(() => setTimeout(pollProgreso, 4000));
+                        }
+
+                        if (progresoBlock) pollProgreso();
+                    </script>
                 </div>
             </div>
         </div>

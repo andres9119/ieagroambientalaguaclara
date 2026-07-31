@@ -15,4 +15,5 @@ urlpatterns = [
     path('<int:pk>/editar/', views.EstudianteUpdateView.as_view(), name='estudiante_editar'),
     path('<int:pk>/eliminar/', views.eliminar_estudiante, name='eliminar_estudiante'),
     path('importar-excel/', views.importar_estudiantes_excel_view, name='importar_estudiantes_excel'),
+    path('importar-excel/progreso/', views.importar_progreso_view, name='importar_progreso'),
 ]

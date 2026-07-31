@@ -528,3 +528,42 @@ def importar_estudiantes_excel_view(request):
     return render(request, 'estudiantes/importar_excel.html', {
         'resultado': resultado,
     })
+
+
+def importar_progreso_view(request):
+    import os
+    from django.http import JsonResponse
+    from django.conf import settings
+
+    progreso_path = os.path.join(settings.BASE_DIR, 'logs', 'importacion_progreso.txt')
+    running = False
+    procesadas = 0
+    total = 0
+    estado = 'idle'
+
+    try:
+        if os.path.exists(progreso_path):
+            with open(progreso_path, 'r', encoding='utf-8') as f:
+                contenido = f.read().strip()
+            if contenido:
+                partes = contenido.split(':', 1)
+                if len(partes) == 2:
+                    estado = partes[0]
+                    num = partes[1]
+                else:
+                    estado = 'procesando'
+                    num = contenido
+                if '/' in num:
+                    p, t = num.split('/', 1)
+                    procesadas = int(p or 0)
+                    total = int(t or 0)
+                running = estado == 'procesando'
+    except (OSError, ValueError):
+        pass
+
+    return JsonResponse({
+        'running': running,
+        'estado': estado,
+        'procesadas': procesadas,
+        'total': total,
+    })
