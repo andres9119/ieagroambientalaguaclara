@@ -120,6 +120,8 @@ class Command(BaseCommand):
         actualizados = 0
         errores = 0
         saltados = 0
+        creados_users = []
+        creados_ests = []
 
         for i, row in enumerate(rows[1:], start=2):
             try:
@@ -195,6 +197,7 @@ class Command(BaseCommand):
                     if user_created:
                         user.set_password(default_pass)
                         user.save()
+                        creados_users.append(user.pk)
                     else:
                         user.first_name = first_name
                         user.last_name = last_name
@@ -288,6 +291,7 @@ class Command(BaseCommand):
 
                     if est_created:
                         creados += 1
+                        creados_ests.append(estudiante.pk)
 
             except Exception as e:
                 errores += 1
@@ -298,6 +302,15 @@ class Command(BaseCommand):
                     self.stderr.write(traceback.format_exc())
 
         total = creados + actualizados + saltados
+        if errores and not dry_run:
+            Estudiante.objects.filter(pk__in=creados_ests).delete()
+            User.objects.filter(pk__in=creados_users).delete()
+            self.stderr.write(self.style.ERROR(
+                f'\nIMPORTACIÓN CANCELADA: {errores} errores encontrados. Se eliminaron los registros creados ({creados}) para no dejar datos incompletos. Corrige las filas con error y vuelve a importar.'
+            ))
+            total = 0
+            creados = 0
+            actualizados = 0
         self.stdout.write(self.style.SUCCESS(
             f'\nResumen: {creados} creados, {actualizados} actualizados, {errores} errores, {saltados} saltados (total: {total})'
         ))

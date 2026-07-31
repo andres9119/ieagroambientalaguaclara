@@ -467,11 +467,14 @@ def admin_required(user):
 @login_required
 @user_passes_test(admin_required)
 def importar_estudiantes_excel_view(request):
-    from django.core.management import call_command
     import tempfile
     import os
+    import threading
+    from django.conf import settings
+    from django.core.management import call_command
 
     resultado = None
+    log_path = os.path.join(settings.BASE_DIR, 'logs', 'importacion_estudiantes.log')
 
     if request.method == 'POST' and request.FILES.get('archivo'):
         archivo = request.FILES['archivo']
@@ -484,23 +487,43 @@ def importar_estudiantes_excel_view(request):
                         tmp.write(chunk)
                     tmp_path = tmp.name
 
-                from io import StringIO
-                buf = StringIO()
                 anio = request.POST.get('anio', 2026)
                 try:
                     anio = int(anio)
                 except ValueError:
                     anio = 2026
 
-                if request.POST.get('dry_run'):
-                    call_command('importar_estudiantes_excel', tmp_path, '--anio', str(anio), '--dry-run', stdout=buf, stderr=buf)
-                else:
-                    call_command('importar_estudiantes_excel', tmp_path, '--anio', str(anio), stdout=buf, stderr=buf)
+                dry_run = bool(request.POST.get('dry_run'))
+                os.makedirs(os.path.dirname(log_path), exist_ok=True)
 
-                os.unlink(tmp_path)
-                resultado = buf.getvalue()
+                def run_import():
+                    try:
+                        with open(log_path, 'w', encoding='utf-8') as f:
+                            cmd_args = [tmp_path, '--anio', str(anio)]
+                            if dry_run:
+                                cmd_args.append('--dry-run')
+                            call_command('importar_estudiantes_excel', *cmd_args, stdout=f, stderr=f)
+                    finally:
+                        try:
+                            os.unlink(tmp_path)
+                        except OSError:
+                            pass
+
+                threading.Thread(target=run_import, daemon=True).start()
+
+                if dry_run:
+                    messages.info(request, 'Simulación iniciada en segundo plano. Refresca la página en unos momentos para ver el resultado en el log.')
+                else:
+                    messages.info(request, 'Importación iniciada en segundo plano. Se importan TODOS los estudiantes o NINGUNO: si hay errores no se guardará ningún dato. Refresca la página en unos momentos para ver el resultado.')
             except Exception as e:
-                messages.error(request, f'Error al importar: {e}')
+                messages.error(request, f'Error al iniciar la importación: {e}')
+
+    try:
+        if os.path.exists(log_path):
+            with open(log_path, 'r', encoding='utf-8') as f:
+                resultado = f.read()
+    except OSError:
+        pass
 
     return render(request, 'estudiantes/importar_excel.html', {
         'resultado': resultado,

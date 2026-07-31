@@ -581,6 +581,10 @@ Límite: **3 certificados por estudiante por mes calendario** (controlado por `f
 
 **Cursos por sede:** cada curso se busca/crea por **nombre del grado + sede** (`get_or_create(nombre=grupo, sede=sede_obj)`), respetando `unique_together ('nombre','sede')`. Así un mismo grado (ej. "Preescolar") en distintas sedes genera cursos separados, y cada estudiante se matricula en el curso de su propia sede.
 
+**Grado en letras:** el grado se toma de `GRADO_COD` (0-11) y se mapea a nombres en letras vía el dict `GRADOS` (0→Preescolar, 1→Primero, ..., 11→Once), con su `nivel` correcto (Preescolar / Básica Primaria / Básica Secundaria / Media Técnica). Si falta `GRADO_COD`, se deduce del `GRUPO`.
+
+**Todo o nada:** el comando registra los usuarios/estudiantes **creados** en la ejecución. Si ocurre algún error (y no es `--dry-run`), elimina esos registros creados y reporta "IMPORTACIÓN CANCELADA", de modo que se importan todos los estudiantes o ninguno (los datos preexistentes no se tocan).
+
 ---
 
 ## 11. Admin de Django
