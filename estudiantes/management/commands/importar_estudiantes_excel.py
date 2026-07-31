@@ -163,16 +163,11 @@ class Command(BaseCommand):
                         defaults={'nombre': sede_nombre}
                     )
 
-                    curso = Curso.objects.filter(nombre=grupo).first()
-                    if not curso:
-                        curso = Curso.objects.create(
-                            nombre=grupo,
-                            sede=sede_obj,
-                            nivel=nivel
-                        )
-                    elif curso.sede != sede_obj:
-                        curso.sede = sede_obj
-                        curso.save()
+                    curso, _ = Curso.objects.get_or_create(
+                        nombre=grupo,
+                        sede=sede_obj,
+                        defaults={'nivel': nivel}
+                    )
 
                     default_pass = documento + '*'
                     user, user_created = User.objects.get_or_create(

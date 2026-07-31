@@ -17,7 +17,7 @@ def numero_a_palabras(num):
                 'quince', 'dieciseis', 'diecisiete', 'dieciocho', 'diecinueve',
                 'veinte', 'veintiuno', 'veintidos', 'veintitres', 'veinticuatro',
                 'veinticinco', 'veintiseis', 'veintisiete', 'veintiocho', 'veintinueve']
-    decenas = ['', '', 'treinta', 'cuarenta', 'cincuenta', 'sesenta',
+    decenas = ['', '', '', 'treinta', 'cuarenta', 'cincuenta', 'sesenta',
                'setenta', 'ochenta', 'noventa']
     centenas = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos',
                 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos']
@@ -65,9 +65,9 @@ def fecha_a_letras(fecha):
     else:
         dia_palabra = numero_a_palabras(dia)
 
-    anio_palabra = numero_a_palabras(anio).capitalize()
+    anio_palabra = numero_a_palabras(anio)
 
-    return f'{dia_palabra} ({dia}) días del mes de {mes} del año {anio_palabra}. ({anio})'
+    return f'{dia_palabra} ({dia}) días del mes de {mes} del año {anio_palabra} ({anio}).'
 
 
 def get_info():
