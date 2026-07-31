@@ -8,6 +8,21 @@ from estudiantes.models import Estudiante, Matricula
 
 User = get_user_model()
 
+GRADOS = {
+    0: ('Preescolar', 'Preescolar'),
+    1: ('Primero', 'Básica Primaria'),
+    2: ('Segundo', 'Básica Primaria'),
+    3: ('Tercero', 'Básica Primaria'),
+    4: ('Cuarto', 'Básica Primaria'),
+    5: ('Quinto', 'Básica Primaria'),
+    6: ('Sexto', 'Básica Secundaria'),
+    7: ('Séptimo', 'Básica Secundaria'),
+    8: ('Octavo', 'Básica Secundaria'),
+    9: ('Noveno', 'Básica Secundaria'),
+    10: ('Décimo', 'Media Técnica'),
+    11: ('Once', 'Media Técnica'),
+}
+
 TIPODOC_MAP = {
     'TI': 'TI', 'T.I': 'TI', 'TARJETA DE IDENTIDAD': 'TI',
     'CC': 'CC', 'C.C': 'CC', 'CEDULA DE CIUDADANIA': 'CC',
@@ -128,25 +143,23 @@ class Command(BaseCommand):
                         tipo_doc = val
                         break
 
-                grupo = str(row[col['GRUPO']] if row[col['GRUPO']] is not None else '').strip()
-                if not grupo:
-                    grado_cod = cell(col, row, 'GRADO_COD')
-                    grupo = grado_cod if grado_cod else 'SIN_GRUPO'
+                grado_num = None
+                try:
+                    grado_num = int(cell(col, row, 'GRADO_COD'))
+                except (ValueError, TypeError):
+                    pass
 
-                nivel = 'BACHILLERATO'
-                digits = ''.join(c for c in grupo if c.isdigit())
-                if len(digits) >= 2 and digits[:2] in ('10', '11'):
-                    grado = int(digits[:2])
-                elif digits:
-                    grado = int(digits[0])
-                else:
-                    grado = 0
-                if 1 <= grado <= 5:
-                    nivel = 'PRIMARIA'
-                elif 6 <= grado <= 9:
-                    nivel = 'SECUNDARIA'
-                elif grado >= 10:
-                    nivel = 'MEDIA'
+                if grado_num is None:
+                    grupo_raw = str(row[col['GRUPO']] if row[col['GRUPO']] is not None else '').strip()
+                    digits = ''.join(c for c in grupo_raw if c.isdigit())
+                    if len(digits) >= 2 and digits[:2] in ('10', '11'):
+                        grado_num = int(digits[:2])
+                    elif digits:
+                        grado_num = int(digits[0])
+                    else:
+                        grado_num = 0
+
+                grupo, nivel = GRADOS.get(grado_num, ('SIN_GRUPO', 'BACHILLERATO'))
 
                 sede_nombre = cell(col, row, 'SEDE')
 
