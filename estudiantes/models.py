@@ -67,8 +67,8 @@ class Estudiante(models.Model):
     acudiente = models.CharField(max_length=200, verbose_name="Acudiente")
     tipo_documento = models.CharField(max_length=2, choices=TIPO_DOC_CHOICES, default='TI', verbose_name="Tipo de Documento")
 
-    telefono = models.CharField(max_length=20, blank=True, verbose_name="Teléfono")
-    celular = models.CharField(max_length=20, blank=True, verbose_name="Celular")
+    telefono = models.CharField(max_length=50, blank=True, verbose_name="Teléfono")
+    celular = models.CharField(max_length=50, blank=True, verbose_name="Celular")
     direccion = models.TextField(blank=True, verbose_name="Dirección")
     barrio = models.CharField(max_length=100, blank=True, verbose_name="Barrio")
     lugar_nacimiento = models.CharField(max_length=200, blank=True, verbose_name="Lugar de Nacimiento")
